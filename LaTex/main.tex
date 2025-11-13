@@ -1,0 +1,142 @@
+\documentclass[pointednumbers, 12pt, DIV15]{scrartcl}
+\usepackage{scrlayer-scrpage}	
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+
+\usepackage{amsfonts,dsfont}
+
+\usepackage{amssymb}
+
+\usepackage{lastpage}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{nicefrac}
+
+%%--------------------------------------------------
+%% Custom Stuff
+%%--------------------------------------------------
+\usepackage{booktabs}
+\usepackage{subfig}
+\usepackage{float} % for [H]
+\usepackage{multirow}
+\usepackage{svg}
+% formats caption that spans multiple lines not to have indentation:
+\usepackage[format=plain]{caption} 
+% Autoref and autoref with subfloats:
+\usepackage{hyperref}
+\newcommand{\subfigureautorefname}{\figureautorefname}
+% no paragraph indents:
+\setlength\parindent{0pt}
+%%--------------------------------------------------
+%% Style Settings
+%%--------------------------------------------------
+\linespread{1.05}
+\automark[section]{section}
+\pagestyle{scrheadings}
+\setheadsepline{0.6pt}
+\setfootsepline{0pt}
+\clearscrheadfoot
+\makeatletter
+%%--------------------------------------------------
+%% Header And Footer
+%%--------------------------------------------------
+\ihead{\small \headmark}
+%% \ohead{\includegraphics[width=70pt]{logo.png}}
+\cfoot
+{
+	\thepage /\pageref{LastPage}
+}
+%%--------------------------------------------------
+%% Document
+%%--------------------------------------------------
+
+
+\newcommand{\supervisor}{Mikko Kolehmainen} 
+\newcommand{\autorA}{Stephen Weybrecht} 
+
+\usepackage{hyperref}
+\hypersetup
+{%
+  pdftitle = {Learning diary},
+  pdfauthor = {\autorA},
+  colorlinks = {false}
+}
+
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+	\vspace{1cm}
+	\textsc{\Large Autumn semester 2025} \\[1.5cm]
+	\includegraphics[width=150pt]{example-image}  \\[1.5cm]
+	\textsc{\Large Data-Mining in Environmental Science} \\[1cm]
+	\rule{\linewidth}{0.5mm} \\[5mm]	
+	 \textsc{\LARGE Learning diary}
+	\rule{\linewidth}{0.5mm}
+	\vspace*{0.5cm} \\
+	\textsc{\Large \@subject} \\[1.4cm]
+	\begin{minipage}[t]{0.4\textwidth}
+		\begin{flushleft} 	\large
+				\begin{tabbing}
+				  \= \textbf{Date:}
+                                  \qquad \qquad \qquad \qquad \= \today \\[3mm]
+				\> \textbf{Author:}   \>  \autorA \\[3mm]
+				\> \textbf{Student number:}   \>  2505376 \\[3mm]
+				\> \textbf{Supervisor:} \> \supervisor
+			\end{tabbing}
+		\end{flushleft}
+	\end{minipage}			
+	\vfill
+\end{center}
+\end{titlepage}
+
+
+%% TOC
+\newpage
+\tableofcontents
+\newpage
+
+%% Learning diary start
+\section{Orientation}
+\label{sec:orientation}
+\input{chapters/orientation.tex}
+\newpage
+
+\section{Introduction and basics}
+\label{sec:introduction and basics}
+\input{chapters/introduction.tex}
+\newpage
+
+\section{Environmental data and its pre-processing}
+\label{sec:environmental data and preprocessing}
+\input{chapters/environmental_data_preprocessing.tex}
+\newpage
+
+\section{Data visualization}
+\label{sec:data visualization}
+\input{chapters/data_visualization.tex}
+\newpage
+
+\section{Clustering in Python}
+\label{sec:clustering in Python}
+\input{chapters/clustering.tex}
+\newpage
+
+\section{Predictive modeling}
+\label{sec:predictive modeling}
+\input{chapters/predictive_modeling.tex}
+\newpage
+
+\section{Summary}
+\label{sec:summary}
+\input{chapters/summary.tex}
+\newpage
+
+\section{Self-evaluation}
+\label{sec:setheadseplineelf-evaluation}
+\input{chapters/self_evaluation.tex}
+\newpage
+
+\end{document}
