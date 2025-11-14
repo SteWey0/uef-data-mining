@@ -28,6 +28,19 @@
 \newcommand{\subfigureautorefname}{\figureautorefname}
 % no paragraph indents:
 \setlength\parindent{0pt}
+
+% Use biblatex
+\usepackage[backend=biber,
+natbib=true,
+maxcitenames = 2,
+maxbibnames = 5,
+minbibnames = 4, 
+sorting=none]{biblatex}
+
+\usepackage{csquotes}
+
+\addbibresource{references.bib}
+\setlength\bibitemsep{1.5\itemsep}
 %%--------------------------------------------------
 %% Style Settings
 %%--------------------------------------------------
@@ -139,4 +152,5 @@
 \input{chapters/self_evaluation.tex}
 \newpage
 
+\printbibliography
 \end{document}
