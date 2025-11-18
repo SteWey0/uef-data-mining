@@ -34,5 +34,55 @@ Here $\hat{\sigma}_i$ are the standard deviations of the variates $x$ and $y$ ac
 It holds that $\rho_{x,y}$ is always between $-1$ and 1 with $-1$ indicating maximum negative correlation, 1 maximum positive correlation and 0 no correlation at all. 
 The covariance matrix (or the reduced correlation matrix obtained when removing all individual standard deviations) therefore indicates correlations between different parameters in a dataset which can be used for explorative data analysis. 
 Another use of it is when fitting a model to a dataset. 
-Here a large degree of correlation between model parameters indicates overfitting meaning a surplus of model parameters. 
+Here a large degree of correlation between model parameters indicates a surplus of model parameters. \\
+
+The normal distribution is the most important continuos probability distribution as a lot of measured data follows it. 
+This is due to the central limit theorem stating that means of random variables taken from arbitrary probability distributions will be distributed normally. 
+As measured quantities are usually means over some finite measurement integration time due to a finite detector resolution many data are distributed normally. 
+The normal or Gaussian probability distribution is given by
+\begin{equation}
+    P(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{\left(x-\mu\right)^2}{2\sigma^2}\right)
+    \label{eq:normal distribution}
+\end{equation}
+with $\mu$ its mean and $\sigma$ its width, corresponding to the population standard deviation in $x$. 
+It is a symmetric distribution and used to formulate confidence intervals as follows:
+\begin{align}
+    P\left(\mu-1\sigma<x<\mu+1\sigma\right) &\approx 68\% \nonumber\\
+    P\left(\mu-2\sigma<x<\mu+2\sigma\right) &\approx 95.5\% \nonumber\\
+    P\left(\mu-3\sigma<x<\mu+3\sigma\right) &\approx 99.7\% 
+    \label{eq:confidence intervals normal distribution}
+\end{align}
+Further important definitions are those of the Jacobian and Hessian matrices, which are matrices of first order derivates of vector valued functions $\mathbf{f}(\mathbf{x})$ or second order derivates of scalar valued functions $f(\mathbf{x})$ respectively. 
+They are used in optimization algorithms like data fitting or neural network learning. 
+These methods are usually implemented already in various Python packages, however I still list the form of the Jacobian and Hessian here for completeness:
+\begin{align}
+    \mathbf{J} &= \nabla_x \cdot \mathbf{f}(\mathbf{x}) & &\text{or element-wise:} & J_{ij} &= \frac{\partial f_i}{\partial x_j} 
+    \label{eq:jacobian} \\
+    \mathbf{H} &= \nabla_x^2 f(\mathbf{x}) & &\text{or element-wise:} & H_{ij} &= \frac{\partial^2 f}{\partial x_i \partial x_j}
+    \label{eq:hessian}
+\end{align}
+The last part of the lecture considered Data Mining. 
+We discussed that Data Mining is a very structured process, where certain steps are done in order to hopefully get meaningful insights from the data at hand and be able to form a model that generalizes well. 
+The first step is explorative data analysis (EDA), where plotting the data (e.g. in histograms or box plots) or calculating covariance matrices to get a rough idea about correlation are utilized. 
+This step makes a lot of sense to me, especially once one deals with larger and larger datasets. 
+However, this has been quite underutilized during my physics studies so far, as we have usually worked the other way around by first forming a hypothesis (for example a model) and then applying it to the data and doing statistics to see if it fits. 
+It is quite interesting to me to do a different approach in this lecture and to see, where this may lead me. 
+I am looking forward to applying this to real datasets in the following weeks during the tutorials. 
+\todo{at end: see if this really was interesting!} 
+The next step is descriptive modelling, where one tries to find patters in the data by, fundamentally, playing around with it. \todo{ok?}
+One can for example try to fit functions like multivariate Gaussians or use clustering methods on the data. 
+Additionally, one can also try to use predictive modelling like classification neural networks to group the data and gather new insights. 
+Hopefully these steps then lead to discovering patterns and rules in the data and finding a strong, i.e. simple model with high degree of generalization and prediction-power instead of remaining with weak models, which do offer some insights but fail to generalize and really understand the data. 
+Weak models are also often classified by many parameters leading to the aforementioned overfitting. 
+During my prior classes where I often used model fitting and machine learning I have often had contacts with overfitting due to fit functions with too many free parameters or overly large neural networks. 
+I therefore know, that avoiding overfitting is one of the most difficult parts in data analysis and am definitely looking forward to learning more about this. 
+
+
+
 \subsection*{Exercise}
+
+\subsection*{Reflection}
+\begin{enumerate}
+    \item how was learning this week?
+    \item How was writing the diary?
+\end{enumerate}
