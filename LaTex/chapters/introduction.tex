@@ -1,0 +1,38 @@
+\subsection*{Lecture}
+The lectures this week dealt with introductory topics regarding the structure of this course, a math and statistics rehearsal as well as an introduction to the topic Data Mining. 
+The math and statistics chapter covers many basic definitions like the axioms and basics properties of probabilities, the definitions of partial derivatives, vectors and matrices and their addition and multiplication properties. 
+Although these are nice to have for completeness sake and should prove helpful for students which do not have a background in statistics yet, for me, they were already known and will therefore not be repeated here. 
+Instead, I will focus on definitions of this chapter which I do not know by heart and which I think will prove useful for the following and will put them into context of what I have already learned. \\
+
+The sample mean $\hat{\mu}$ and sample variance $\hat{\sigma}^2$ provide unbiased estimators for the population mean $\mu$ and population variance $\sigma^2$ given a certain sample $v_i$ of size $N$, i.e. $i\in(1,N)$. 
+They are defined as 
+\begin{gather}
+    \hat{\mu} = \frac{1}{N} \sum_{i=1}^{N} v_I  
+    \label{eq:sample mean}\\
+    \hat{\sigma}^2 = \frac{1}{N-1} \sum_{i=1}^{N} \left( v_i - \hat{\mu}\right)^2
+    \label{eq:sample variance}
+\end{gather}
+I recall from a prior course on statistics that the sample variance with the $N-1$ term in the denominator should be used in the case of an \emph{unknown} mean, i.e. if the mean is estimated by \autoref{eq:sample mean}, as it provides an unbiased estimator and therefore better convergence to the true but unknown sample variance for small $N$. 
+If instead the mean is inferred through different means, the minus 1 term can be dropped. 
+In \lstinline{numpy} the sample variance can be simply calculated by setting the parameter \lstinline{ddof=1}:
+
+\begin{lstlisting}[language=Python, caption={Sample variance, calculated in numpy}, label={lst:sample variance}]
+    import numpy as np
+    # array is a sample array of data
+    sample_var = np.std(array, ddof=1)
+\end{lstlisting}
+
+If there are more than just one random variates a variance can be calculated for each one. 
+Additionally, a so-called covariance between two different variated can also be calculated. 
+Covariances and variances are summarized in a covariance matrix, whose elements are defined as follows: 
+
+\begin{equation}
+    \mathrm{Cov}\left(x,y\right) = \frac{1}{n-1} \sum_{i=1}^{N}\left(x_i-\hat{\mu}_x\right)\left(y_i-\hat{\mu}_y\right) = \hat{\sigma}_x\hat{\sigma}_y\rho_{x,y}
+    \label{eq:covariance matrix}
+\end{equation}
+Here $\hat{\sigma}_i$ are the standard deviations of the variates $x$ and $y$ according to \autoref{eq:sample variance} and $\rho_{x,y}$ is the degree of correlation between $x$ and $y$. 
+It holds that $\rho_{x,y}$ is always between $-1$ and 1 with $-1$ indicating maximum negative correlation, 1 maximum positive correlation and 0 no correlation at all. 
+The covariance matrix (or the reduced correlation matrix obtained when removing all individual standard deviations) therefore indicates correlations between different parameters in a dataset which can be used for explorative data analysis. 
+Another use of it is when fitting a model to a dataset. 
+Here a large degree of correlation between model parameters indicates overfitting meaning a surplus of model parameters. 
+\subsection*{Exercise}
