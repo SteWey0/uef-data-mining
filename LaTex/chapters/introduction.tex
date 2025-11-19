@@ -80,9 +80,77 @@ I therefore know, that avoiding overfitting is one of the most difficult parts i
 
 
 \subsection*{Exercise}
+The goal of the first exercise was to get a handle on the provided \lstinline|toolo.csv| dataset by using the aforementioned technique of EDA. 
+First data from leap years is dropped for better comparability. 
+After this the \lstinline|.describe| method of \lstinline|pandas|-dataframes is used to get a summary of the nitrogen dioxide and ozone concentration columns. 
+By this we find mean concentrations and standard deviations of:
+\begin{align*}
+    \mathrm{NO_2} &: 38.4 \pm 23.2 \\
+    \mathrm{O_3} &: 37.0 \pm 22.0 
+\end{align*}
+\todo{units?}
+This makes clear, that the nitrogen dioxide measurement has a larger variability than the ozone measurement. 
+Furthermore, this simple analysis indicates already some erroneous data points. 
+The minimum of the NO$_2$ concentration is for example at $-3$ \todo{units}. 
+This is unphysical and could stem from an erroneous measurement e.g. an error when digitizing the measured concentration. 
+Sometimes measurement devices also deliberately save unphysical values to indicate an error that happened during the measurement. 
+In this case the value of $-3$ \todo{unit} could be understood as an error code. 
+To see whether this is the case, one would need to take a look at the manufacturers data sheet of the specific detector in question. 
+In principle such data points should be excluded from further analysis to not skew the results one gets from the physical data. \\
+In a next step the columns corresponding to the particulate matter mass under 10\,$\mu$m, carbon monoxide concentration, temperature, humidity and wind speed have been analyzed additionally in a similar manner. 
+From this it becomes clear, that the mass and carbon monoxide concentration show similar unphysical negative values as the nitrogen dioxide concentration. 
+As also these unphysical values occur at perfect integer values, a look into the datasheet or the digitization software of the detectors would be helpful to understand these values and see, if they maybe really correspond to error codes. 
+O course, filtering this data out is simple, but it is worth to investigate where this erroneous data stems from, what could be wrong during measurement and also how much data is affected. 
+Additionally, there are some interesting insights to be gained by looking at the mean, standard deviation, minimum and maximum values of the data besides faulty measurements. 
+One can for example see, that there is a seemingly small number of very heavy small particles in the analyzed air, as the mean value of the mass is roughly 25 times smaller than the maximum value. 
+Furthermore, one can see that the carbon monoxide concentration in the air is much smaller than that of any other gas. 
+The temperature and humidity show very large spreads over the dataset that are on the order of a forth of the whole data range. 
+Lastly, one can see that the wind speed is a strictly positive quantity and is therefore not directional. 
+This shows that already a simple analysis requiring only a few lines of code can give valuable insights on the data range, its variability and possible errors during measurement. \\
+
+Next the correlation between the individual variates is calculated (compare \autoref{eq:covariance matrix}) and plotted. 
+This is shown in \autoref{fig:plots/e1_corr.pdf}. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e1_corr.pdf}
+    \caption{Cross correlation matrix calculated using the mentioned columns of the \lstinline|toodo.csv| dataset.}
+    \label{fig:plots/e1_corr.pdf}
+\end{figure}
+The strongest positive correlation is present between the nitrogen dioxide and carbon monoxide concentration. 
+This indicates, that the processing leading to an increase or decrease of these gases in the atmosphere are strongly linked such that an increase in one is connected to an increase in the other gas. 
+At this point it is important to keep in mind that this analysis shows only correlation but not causality meaning that we cannot conclusively state which change leads to which but only that they are connected. 
+Similarly, an anticorrelation between the concentrations of nitrogen dioxide and ozone can be seen as the correlation coefficient between those two quantities is negative. 
+This indicates that a rise in one of the quantities is linked to a fall in the other. 
+Additionally, a correlation between particle mass under ten microns and nitrogen dioxide concentration is present, suggesting a link between these two. 
+There are also smaller degrees of anticorrelation between both the wind speed and nitrogen dioxide concentration as well as temperature and humidity. 
+While the latter seems reasonable (higher temperatures seem to be connected with lower relative humidities), the prior is quite hard for me to understand. 
+It could be interesting to investigate this further. 
+It is quite fascinating to me, that such a simple analysis, requiring only a few simple lines of code can already extract interesting research questions that can be expanded on. \\
+
+In a last task the individual distributions of the quantities was looked at by plotting histograms of the data shown in \autoref{fig:plots/e1_hist.pdf}. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e1_hist.pdf}
+    \caption{Histogram of the data columns of the \lstinline|toodo.csv| dataset.}
+    \label{fig:plots/e1_hist.pdf}
+\end{figure}
+While temperature as well as the gas concentrations and wind speed qualitatively look roughly normal distributed (taking into account, that the distribution is cut due to unphysical values), the humidity and particle masses under ten microns seem quite asymmetric. 
+The histogram of the particle masses roughly fits to the realization I already had when looking at the mean, minimum and maximum values of the taken data in a prior step. 
+It seems there are a lot of particles with low mass which influence the mean heavily, but there also remain a few particles of very high mass. 
+In fact, to me the distribution looks similar to an exponential when postulating that very small masses are underrepresented probably due to the detector not being able to measure arbitrarily small particulates accurately. 
+Of course, this would still need to be quantified, but it poses an interesting research idea for further analysis. 
+The humidity diagram is heavily skewed towards high humidities. 
 
 \subsection*{Reflection}
-\begin{enumerate}
-    \item how was learning this week?
-    \item How was writing the diary?
-\end{enumerate}
+Although the topics presented this week were mostly nothing new to me, I found applying explorative data analysis quite interesting. 
+It was quite fascinating to see how much knowledge can already be gained from a complex dataset by just looking at statistical properties of the data and its correlation. 
+This is especially true, as I do not have a background in environmental science and therefore discovering correlations between different gases in the atmosphere or temperature and humidity did always come as a surprise and led to the curiosity to read up on the phenomena happening in the atmosphere that could lead to these links. 
+My learning itself was quite well-structured this week. 
+I was successful in writing the learning diary in multiple sessions and doing small updates at a time which also lead to me thinking more about the presented topics and dataset and also re-discovering topics that I already learned in previous courses which fit nicely into this week's lecture. 
+Having a stronger background in statistics I do however think that the meaning of the sample variance and mean as unbiased \emph{estimators} of the true and unknown population quantities could have been motivated more thoroughly and clearly. 
+I feel like this is one of the most important concepts to understand when starting to discuss statistics, as for people having no background so far these definitions must have come out of nowhere. 
+I do however also understand the time constraints of this course, as it is a synthesis of two different courses which were held prior. 
+Additionally, I think it would have been interesting to be required to do some analysis/coding myself for the exercises. 
+The way the exercises are structured now, the entire code is already provided and only the description part is required. 
+I feel like more interesting and maybe more rewarding insights could be gained if students are asked to perform some exploration on their own. 
+This will maybe be the case in future exercises. 
