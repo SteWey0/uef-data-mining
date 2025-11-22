@@ -1,0 +1,68 @@
+\subsection*{Lecture}
+The focus of this weeks lecture were data pre-processing steps necessary for typical datasets in environmental science. 
+For this we discussed three important steps: Handling missing data, metrics, i.e. a way to compare data and transformations as a way to scale data to similar magnitudes. 
+For each step we talked about the principle behind it and why it is necessary after which a few example algorithms were discussed. 
+In the following I will focus on the idea behind each step and the most interesting and new algorithms to me and will compare their qualities. \\
+
+The first topic we discussed was missing data. 
+It is clear that efficiently handling these gaps is vital as firstly in any real dataset these are numerous and secondly most further analysis steps cannot handle missing values. 
+These \lstinline|NaN| values can stem from measurement errors, human mistakes or instrument failures. 
+The most straightforward although very brute-force way is to just drop any entry of the dataframe, that contains at least 1 or some number of \lstinline|NaN| values. 
+This can be done rather easily as can be seen in \autoref{lst:dropna}. 
+\begin{lstlisting}[language=Python, caption={Example for dropping rows with missing values}, label={lst:dropna}]
+import pandas as pd
+df = pd.read_csv(foo.csv)       # read some data
+thresh = 1
+df = df.dropna(thresh=thresh)   # drop every row with at least thresh NaNs
+\end{lstlisting}
+If one finds out that mainly one variable is problematic, one could also delete this variable (column) from the dataset. 
+Both options have the strong downside of cutting also viable data which generally leads to a loss of predictive power of a resulting model. 
+Another way of dealing with missing values is imputation, meaning filling the missing value with another one based on some algorithm. 
+A few of these are listed here, ordered simple to more complex:
+\begin{itemize}
+    \item Imputation with mean, median or a random value $\Rightarrow$ can alter the distribution of data significantly
+    \item Imputation by linear interpolation $\Rightarrow$ useful for time-series data
+    \item Nearest neighbor imputation: For each $N$ dimensional feature vector of the dataframe $\mathbf{x}_i$ where the index $i$ represents the row that has $N_{\mathrm{miss}}$ missing values, we calculate a distance to every other feature vector as follows: $d_{ij} = \frac{N}{N-N_{\mathrm{miss}}} \left\lVert \mathbf{x}_i - \mathbf{x}_j \right\rVert^2$. The missing values are taken from the feature vector with the smallest distance $\Rightarrow$. The most interesting thing about this metric for me is that there is no introduction of new values, while also taking into account the reliability of data by making vectors with many \lstinline|NaNs| have a large distance.
+\end{itemize}
+It is important to note that the choice of imputation method can heavily influence the model so taking care is needed. 
+A good choice is to use univariate methods like interpolation for short gaps and multivariate approaches like the nearest neighbor imputation for longer gaps in the data. \\
+
+The next topic concerned metrics, a way to compare how similar or dissimilar two entries of a dataframe are. 
+Metrics are a quite general mathematical concept allowing many different forms with different usecases, however here only a few examples will be named. 
+If the data entries are numeric a simple measure of similarity is the dot product between vectors, while a measure of dissimilarity could be the distance between them. 
+An interesting distance measure has already been shown above, but a very general and often used one is the so called Minkowski distance
+\begin{equation}
+    d(x,y) = \left(\sum_{i=1}^{N} \left\lvert x_i - y_i\right\rvert^p \right)^{\nicefrac{1}{p}}
+    \label{eq:minkowski distance}
+\end{equation}
+which reduces to the normal Euclidean distance for $p=2$ but also has interesting cases for $p=1$ (Taxicab/Manhattan distance) or $p\rightarrow\infty$ (Chebyshev distance). 
+These are illustrated in \autoref{fig:distances} for a 2-dimensional case. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.35\textwidth]{pics/distances.pdf}
+    \caption{Different cases of the general Minkowski distance illustrated in 2D with the analogy of chess pieces. Taken from \cite{wikimedia:distances}.}
+    \label{fig:distances}
+\end{figure}
+Additionally, there are also many different metrics used for class-like or binary data. \\
+
+The last topic we covered were transformations which can affect single values, rows or columns of the dataset or even the dataset as a whole. 
+Column transformations are especially important, as different data columns are usually very different in the magnitude of their entries. 
+If no normalization is done, large entries will dominate small ones, which is usually not wanted. 
+Additionally, columns could contain discontinuous data. 
+Some useful and interesting transformations include:
+\begin{itemize}
+    \item Discontinuous, cyclic data (like hours of the day) can be handled efficiently by expressing it by its sine and cosine components leading to a range of values between -1 and 1. The additional cosine is needed to distinguish between the rising and falling edge of the sine function. This seems very useful, as it normalizes the data as well.
+    \item Logarithmic pre-scaling of columns can be useful if the data has a large spread over multiple orders of magnitude. This also leads to a rough normalization but alters the distribution. 
+    \item Variance scaling, i.e. shifting the data columns by its mean and normalizing by its variance is also a standard technique. It could prove especially useful if the data can be assumed to be Gaussian, as we then expect a standard normal distribution afterward. It does suppress outliers, however.
+    \item Equalization forces the data to be in the range of $(-1,1)$ but can lead to pronounced outliers. This is a problem I already faced in a previous machine learning project of mine. The \lstinline|sklearn| documentation provides a great comparison \cite{scikit:scalers}.
+\end{itemize}
+The main take-away from this lecture and my prior experience with machine learning and analysing datasets is the following:
+It is crucially important to think about all pre-processing steps that one performs on their dataset. 
+They can have a huge impact on the statistics of the data after the processing, the model one gains and especially the machine learning efficiency and features that are learned by the neural network. 
+
+
+
+\subsection*{Exercise}
+
+
+\subsection*{Reflection}

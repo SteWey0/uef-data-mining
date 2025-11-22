@@ -17,9 +17,9 @@ If instead the mean is inferred through different means, the minus 1 term can be
 In \lstinline{numpy} the sample variance can be simply calculated by setting the parameter \lstinline{ddof=1}:
 
 \begin{lstlisting}[language=Python, caption={Sample variance, calculated in numpy}, label={lst:sample variance}]
-    import numpy as np
-    # array is a sample array of data
-    sample_var = np.std(array, ddof=1)
+import numpy as np
+# array is a sample array of data
+sample_var = np.std(array, ddof=1)
 \end{lstlisting}
 
 If there are more than just one random variates a variance can be calculated for each one. 
