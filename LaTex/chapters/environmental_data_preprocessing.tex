@@ -1,5 +1,5 @@
 \subsection*{Lecture}
-The focus of this weeks lecture were data pre-processing steps necessary for typical datasets in environmental science. 
+The focus of this week's lecture were data pre-processing steps necessary for typical datasets in environmental science. 
 For this we discussed three important steps: Handling missing data, metrics, i.e. a way to compare data and transformations as a way to scale data to similar magnitudes. 
 For each step we talked about the principle behind it and why it is necessary after which a few example algorithms were discussed. 
 In the following I will focus on the idea behind each step and the most interesting and new algorithms to me and will compare their qualities. \\
@@ -28,7 +28,7 @@ It is important to note that the choice of imputation method can heavily influen
 A good choice is to use univariate methods like interpolation for short gaps and multivariate approaches like the nearest neighbor imputation for longer gaps in the data. \\
 
 The next topic concerned metrics, a way to compare how similar or dissimilar two entries of a dataframe are. 
-Metrics are a quite general mathematical concept allowing many different forms with different usecases, however here only a few examples will be named. 
+Metrics are a quite general mathematical concept allowing many different forms with different use cases, however here only a few examples will be named. 
 If the data entries are numeric a simple measure of similarity is the dot product between vectors, while a measure of dissimilarity could be the distance between them. 
 An interesting distance measure has already been shown above, but a very general and often used one is the so called Minkowski distance
 \begin{equation}
@@ -56,13 +56,79 @@ Some useful and interesting transformations include:
     \item Variance scaling, i.e. shifting the data columns by its mean and normalizing by its variance is also a standard technique. It could prove especially useful if the data can be assumed to be Gaussian, as we then expect a standard normal distribution afterward. It does suppress outliers, however.
     \item Equalization forces the data to be in the range of $(-1,1)$ but can lead to pronounced outliers. This is a problem I already faced in a previous machine learning project of mine. The \lstinline|sklearn| documentation provides a great comparison \cite{scikit:scalers}.
 \end{itemize}
-The main take-away from this lecture and my prior experience with machine learning and analysing datasets is the following:
+The main take-away from this lecture and my prior experience with machine learning and analyzing datasets is the following:
 It is crucially important to think about all pre-processing steps that one performs on their dataset. 
 They can have a huge impact on the statistics of the data after the processing, the model one gains and especially the machine learning efficiency and features that are learned by the neural network. 
 
 
 
 \subsection*{Exercise}
+This weeks exercise deals with distance metrics, scaling of data and binary encoding. 
+In a first step the \lstinline|iris| dataset provided by the library \lstinline|sklearn| is imported as it only has numerical values and therefore provides an easy example for the following analysis. 
+Note however, that the exact dataset used does not really matter, as in the following only the effect of transformations is examined, not the data itself. 
+In a first step, five random entries of the dataset are chosen and the Euclidean distances between them are calculated. 
+This results in a $5 \times 5$ matrix containing the distance between any line with any other one in the 5-dimensional feature space. 
+Trivially, the distance between any entry to itself is zero and there are some lines which are more "similar", i.e. have a smaller distance and some which are more "dissimilar". 
+However, the distances are not yet normalized to a range between $(0,1)$ and are therefore tricky to interpret. 
+In a next step all entries are therefore first normalized (by requiring their $L_2$-norm to be equal to unity) and then the distance matrix is recalculated. 
+Still, all entries have zero-distance to themselves and the ordering of distances between entries remains intact. 
+This means the closest and most far apart entries are still the same, with the added benefit that all distances are now smaller than 1. 
+This leads to a better comparability for the naked eye but is also important for further data analysis steps that might follow. 
+I could imagine working with normalized entries is especially important for algorithms like k-nearest neighbor classification, as outliers due to very different data ranges or even different units will diminish its accuracy. 
+From prior experience I furthermore know that normalization is quite important when one plans to supply the data as an input to a neural network, as these often used activation functions that are only effective at a data range of $(0,1)$. \\
 
+In a next step the effect of scaling the data columns with variance and equalization scaling is analyzed. 
+This is shown in \autoref{fig:plots/e2_box.pdf}. 
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics{plots/e2_box.pdf}
+    \caption{The original, variance scaled and equalized data of the \lstinline|iris| dataset is shown as boxplots.}
+    \label{fig:plots/e2_box.pdf}
+\end{figure}
+
+As was already discussed the transformations have different effects. 
+Variance scaling transforms data to have zero-mean (Note: \emph{not} zero-median, the lines in box plots show quartiles of the data) and a variance of one. 
+As such it is especially useful when data is expected to be normally distributed as it will result in data following a standard normal distribution afterward. 
+However, it is important to keep in mind, that variance scaling does not change the underlying distribution as can also be seen in the plot. 
+In other words, skewed data remains skewed, the only effect is a shift and "zoom" of the data. 
+Outliers can have a substantial influence, if they are at very large magnitudes, as they then have a strong influence on the empirical mean and standard deviation which compresses the data strongly after scaling. 
+This is less visible here, but nicely illustrated in \cite{scikit:scalers}. 
+Equalization forces all data to be in the range of $(0,1)$ and is therefore heavily influenced by large outliers, as these are normalized to one which can lead to an extreme compression of the more common values in the center range. 
+This can be seen in the sepal width column of \autoref{fig:plots/e2_box.pdf} where 50\% of the data lies in a very narrow range after the transformation, which can lead to a difficulty in distinguishing the most important features and an overrepresentation of outliers in a further model. 
+Equalization also keeps the underlying distribution and only shifts and squeezes it. 
+Because of the mentioned effects of standardization I conclude that one has to be quite careful when applying this simple min-max scaling on data with outliers. 
+It is only useful if no extreme outliers are present and data has to be in the unit interval for further analysis (for example sigmoid and tanh activation functions in neural networks). 
+Still there might be scalers which are better suited for the data, see e.g. \cite{scikit:scalers}. \\
+
+As the last step the Dice similarity metric is tested on categorical data. 
+It is defined for binary data $X$, $Y$ as 
+\begin{equation}
+    S_{\mathrm{Dice}} = \frac{2\left\lvert X\cap Y \right\rvert }{\left\lvert X\right\rvert + \left\lvert Y\right\rvert}
+    \label{eq:dice similarity}
+\end{equation}
+where the cardinality of the sets, e.g. $\left\lvert X \right\rvert $ is defined as the number of entries that are equal to one. 
+First categorical sample data about cars, including their color, engine and brand is created. 
+This is then transformed to binary data using the handy method \lstinline|pandas.get_dummies()| and the Dice similarity is calculated between the entries (cars). 
+The results make intuitive sense. 
+Cars 1 and 2 which do not have any attributes in common have a similarity of 0, while cars 1 and 4 share two out of three attributes and therefore have $S_{\mathrm{Dice}}=\nicefrac{2}{3}$. 
+It is noteworthy that while the conversion to binary labels creates many more categories this does not influence the Dice similarity negatively as given the cardinalities definition only nonzero entries matter. 
+In my opinion this makes the Dice similarity much more usable, as it makes sense given the original categorical data and is normalized to unity given this data as well. 
+However through the binary representation gained by \lstinline|pandas.get_dummies()| some information is also lost for future models. 
+A future model cannot know anymore that the three specific colors are just different values of a more general color category which would certainly prove quite useful for generalization. 
+This could be solved by using a different metric that does not require binary data and assigning the different colors e.g. different numeric labels (like 1,2,3 or a three-dimensional color vector). 
+Using binary data can also drastically increase the dimensionality of the dataframe, especially when there are many different values belonging to the categories. 
+This makes further computational steps much more computation heavy and therefore timely. 
 
 \subsection*{Reflection}
+What I learned this week was quite interesting to me. 
+Although I still knew most of the things presented in the lecture and exercise, there were some new things, like Nearest-neighbor imputation and the Dice metric that i did not know before. 
+I think these will prove quite useful. 
+Furthermore, the topic about normalization and scaling of data was a great starting point for me to read up on the documentation \cite{scikit:scalers} once more. 
+As mentioned numerous times, I am quite fond on statistics and did already have some machine learning projects where input data normalization was quite a challenge. 
+It was nice being reminded of these topics again and seing them used in a different light. 
+For me this repetition in different contexts and making connections to prior courses really helps my understanding, so I am happy to see that there are so many links. 
+Writing the diary this week was more rushed and stressful due to other university courses interfering. 
+This is something I want to do better next week by having a more structured plan for writing. 
+Last week I remarked that it would be nice to do more programming by oneself. 
+While this was still not yet needed this week I quite enjoyed the more open questions about e.g. k-mean-clustering and potential limitations where one needed to think more and read up on some additional limitations of the techniques covered, as this also helped my understanding. 
