@@ -1,0 +1,31 @@
+Sammons mapping:
+\begin{itemize}
+  \item Sammon mapping weights small distances more strongly, so local neighborhoods matter the most.
+  \item Given $d\in R^D$ we calculate all pairwise distances $d_{ij}=\|x_i-x_j\|$ 
+  \item to achieve a mapping $y\in R^d$ where $d<D$, usually 2, we calculate distances again $d'_{ij}=\|y_i-y_j\|$
+  \item then minimize the cost function $E=\frac{1}{\sum_{i<j}d_{ij}}\sum_{i<j}\frac{(d_{ij}-d'_{ij})^2}{d_{ij}}$. Note that this weighs small distances more (denominator) and the first factor is just normalization
+  \item updates through gradient descent $y_i\leftarrow y_i-\eta\frac{\partial E}{\partial y_i}$
+  \item Optimization is slow (O(N²) distance computations).
+  \item Sensitive to local minima results depend on initialization.
+  \item Less powerful than modern methods like t-SNE
+  \item Preserves distances, especially well small ones
+\end{itemize}
+
+Self organizing maps:
+\begin{itemize}
+  \item Unsupervised Neural network of nerons on a (usually) 2d grid, each of them has a weight vector $w\in R^D$ when the input is $x\in R^D$
+  \item show many samples, for each of them we calculate the best matching unit (BMU) i.e. the closest neuron $\text{BMU}(x)=\arg\min_i\|x-w_i\|$
+  \item The BMU and its neighbors are updated to be more close to the input. The update is based on the distance of the neuron to the BMU 
+  $w_i(t+1)=w_i(t)+\alpha(t)\,h_{ci}(t)\,(x-w_i(t))$ with the neighborhod function (Gaussian)
+  $h_{ci}(t)=\exp\!\left(-\frac{\|r_c-r_i\|^2}{2\sigma(t)^2}\right)$
+  \item This way Nearby neurons on the grid end up representing similar types of inputs.
+  \item So the grid becomes a kind of flattened, simplified version of the input space.
+  \item If two neurons are adjacent on the grid → their prototypes are similar in high-D space.
+  \item Clusters appear as contiguous regions.
+  \item Boundaries between clusters appear as lines or curves on the map.
+  \item Analogy: A SOM grid acts like a rubber sheet with fixed positions (the neuron grid).
+This sheet is pulled toward data points, but it stays smooth because neurons are connected. The 2D sheet gives a flattened but structurally consistent view of the high-D data.
+\item an important visulaization is the U-matrix $U(i)=\frac{1}{|N(i)|}\sum_{j\in N(i)}\|w_i-w_j\|$ which contains average distances between each neuron and its neighbors weights (N is amount of neighbors)
+\item if these are small values are simmilar, if large quite different
+\item plot as heatmap to see clusters and cluster boundaries
+\end{itemize}
