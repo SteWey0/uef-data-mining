@@ -1,31 +1,66 @@
 Sammons mapping:
 \begin{itemize}
-  \item Sammon mapping weights small distances more strongly, so local neighborhoods matter the most.
-  \item Given $d\in R^D$ we calculate all pairwise distances $d_{ij}=\|x_i-x_j\|$ 
-  \item to achieve a mapping $y\in R^d$ where $d<D$, usually 2, we calculate distances again $d'_{ij}=\|y_i-y_j\|$
-  \item then minimize the cost function $E=\frac{1}{\sum_{i<j}d_{ij}}\sum_{i<j}\frac{(d_{ij}-d'_{ij})^2}{d_{ij}}$. Note that this weighs small distances more (denominator) and the first factor is just normalization
-  \item updates through gradient descent $y_i\leftarrow y_i-\eta\frac{\partial E}{\partial y_i}$
-  \item Optimization is slow (O(N²) distance computations).
-  \item Sensitive to local minima results depend on initialization.
-  \item Less powerful than modern methods like t-SNE
-  \item Preserves distances, especially well small ones
+    \item Sammon mapping weights small distances more strongly, so local neighborhoods matter the most.
+    \item Given $d\in R^D$ we calculate all pairwise distances $d_{ij}=\|x_i-x_j\|$ 
+    \item to achieve a mapping $y\in R^d$ where $d<D$, usually 2, we calculate distances again $d'_{ij}=\|y_i-y_j\|$
+    \item then minimize the cost function $E=\frac{1}{\sum_{i<j}d_{ij}}\sum_{i<j}\frac{(d_{ij}-d'_{ij})^2}{d_{ij}}$. Note that this weighs small distances more (denominator) and the first factor is just normalization
+    \item updates through gradient descent $y_i\leftarrow y_i-\eta\frac{\partial E}{\partial y_i}$
+    \item Optimization is slow (O(N²) distance computations).
+    \item Sensitive to local minima results depend on initialization.
+    \item Less powerful than modern methods like t-SNE
+    \item Preserves distances, especially well small ones
 \end{itemize}
 
 Self organizing maps:
 \begin{itemize}
-  \item Unsupervised Neural network of nerons on a (usually) 2d grid, each of them has a weight vector $w\in R^D$ when the input is $x\in R^D$
-  \item show many samples, for each of them we calculate the best matching unit (BMU) i.e. the closest neuron $\text{BMU}(x)=\arg\min_i\|x-w_i\|$
-  \item The BMU and its neighbors are updated to be more close to the input. The update is based on the distance of the neuron to the BMU 
-  $w_i(t+1)=w_i(t)+\alpha(t)\,h_{ci}(t)\,(x-w_i(t))$ with the neighborhod function (Gaussian)
-  $h_{ci}(t)=\exp\!\left(-\frac{\|r_c-r_i\|^2}{2\sigma(t)^2}\right)$
-  \item This way Nearby neurons on the grid end up representing similar types of inputs.
-  \item So the grid becomes a kind of flattened, simplified version of the input space.
-  \item If two neurons are adjacent on the grid → their prototypes are similar in high-D space.
-  \item Clusters appear as contiguous regions.
-  \item Boundaries between clusters appear as lines or curves on the map.
-  \item Analogy: A SOM grid acts like a rubber sheet with fixed positions (the neuron grid).
-This sheet is pulled toward data points, but it stays smooth because neurons are connected. The 2D sheet gives a flattened but structurally consistent view of the high-D data.
-\item an important visulaization is the U-matrix $U(i)=\frac{1}{|N(i)|}\sum_{j\in N(i)}\|w_i-w_j\|$ which contains average distances between each neuron and its neighbors weights (N is amount of neighbors)
-\item if these are small values are simmilar, if large quite different
-\item plot as heatmap to see clusters and cluster boundaries
+    \item Unsupervised Neural network of nerons on a (usually) 2d grid, each of them has a weight vector $w\in R^D$ when the input is $x\in R^D$
+    \item show many samples, for each of them we calculate the best matching unit (BMU) i.e. the closest neuron $\text{BMU}(x)=\arg\min_i\|x-w_i\|$
+    \item The BMU and its neighbors are updated to be more close to the input. The update is based on the distance of the neuron to the BMU 
+    $w_i(t+1)=w_i(t)+\alpha(t)\,h_{ci}(t)\,(x-w_i(t))$ with the neighborhod function (Gaussian)
+    $h_{ci}(t)=\exp\!\left(-\frac{\|r_c-r_i\|^2}{2\sigma(t)^2}\right)$
+    \item This way Nearby neurons on the grid end up representing similar types of inputs.
+    \item So the grid becomes a kind of flattened, simplified version of the input space.
+    \item If two neurons are adjacent on the grid → their prototypes are similar in high-D space.
+    \item Clusters appear as contiguous regions.
+    \item Boundaries between clusters appear as lines or curves on the map.
+    \item Analogy: A SOM grid acts like a rubber sheet with fixed positions (the neuron grid). This sheet is pulled toward data points, but it stays smooth because neurons are connected. The 2D sheet gives a flattened but structurally consistent view of the high-D data.
+    \item an important visulaization is the U-matrix $U(i)=\frac{1}{|N(i)|}\sum_{j\in N(i)}\|w_i-w_j\|$ which contains average distances between each neuron and its neighbors weights (N is amount of neighbors)
+    \item if these are small values are simmilar, if large quite different
+    \item plot as heatmap to see clusters and cluster boundaries
 \end{itemize}
+
+
+This week's lecture focussed on visualizing high dimensional data and working with data in time series. 
+Especially the first part contained many new things to me, which is why I will put a bigger emphasis on it in the following paragraphs. 
+If data is low dimensional, visualization via histograms, box plots, scatter plots, or other methods is straightforward and has been discussed in the chapters above already. 
+A more interesting question is how very high dimensional data with maybe hundreds of entries (columns in a dataframe) can be visualized in a 2-dimensional space to get a grasp on clusters and for example prepare the data for clustering algorithms to obtain data classes. 
+We discussed to examples of dimensionality reduction here, namely Sammon mapping and self organizing maps (SOMs). 
+These are quite interesting to me, as I only knew about Principal component analysis (which has the disadvantage of being linear) t-SNE prior to this lecture. 
+Both Sammon mapping and SOMs are nonlinear and can therefore capture the usually complex high dimensional manifolds spanned by the data but are still easy to understand. \\
+
+Sammon mapping is based on the idea of pairwise conserving distances in the mapping of input vectors $x\in \mathbb{R}^D$ to output vectors $y\in \mathbb{R}^d$ with $d<D$ (usually $d=2$). 
+Specifically, the algorithm is constructed such, that small distances are weighted more strongly. 
+This means, it tries to achieve a mapping that preserves local neighborhoods well and therefore preserves grouping of the data points. 
+Sammon mapping follows these steps:
+\begin{enumerate}
+    \item First, pairwise distances between all inputs $d_{ij}=\|x_i-x_j\|$ and all outputs $d'_{ij}=\|y_i-y_j\|$ are calculated. For the first iteration outputs can be initialized randomly. 
+    \item A cost function is calculated as $E=\frac{1}{\sum_{i<j}d_{ij}}\sum_{i<j}\frac{(d_{ij}-d'_{ij})^2}{d_{ij}}$. Note how the denominator leads to a larger weight for small distances. The prefactor is just for normalization.
+    \item This cost function is minimized through usual gradient descent and the output mappings are updated as $y_i\leftarrow y_i-\eta\frac{\partial E}{\partial y_i}$, where $\eta$ is a preset learning rate. 
+\end{enumerate} \todo{check equatoins. they differ from lecture}
+The downsides of Sammon mapping include its sensitivity to local minima leading to failed mappings (due to random initialization), and that the algorithm is rather slow ($\mathcal{O}(N^2)$ distance calculations). 
+However, it is useful if distances should be preserved well. \\
+
+Self organizing maps are an unsupervised neural network, where neurons are placed on a usually fixed, 2-dimensional grid. 
+Each neuron has a weight vector $w\in \mathbb{R}^D$ when the data is given by $x\in \mathbb{R}^D$. 
+The main idea is to find for each input sample (row of the dataset) the closest neuron, i.e. the one where the weight matches closely the input value itself. 
+This neuron and its surrounding are then updated to be more similar to the input. 
+After learning one tries to achieve the situation where each neuron reflects one "typical" input sample with neighboring neurons in the 2-dimensional grid being similar. 
+This way a high dimensional input space is represented in a flattened, although topologically similar space. 
+The following steps are important:
+\begin{enumerate}
+    \item First, the best-matching unit (BMU), the closest neuron, is calculated: $\text{BMU}(x)=\arg\min_i\|x-w_i\|$
+    \item The BMU and its neighbors are updated to be more similar to the input. The update is based on the distance of the neuron to the BMU: 
+    $w_i(t+1)=w_i(t)+\alpha(t)\,h_{ci}(t)\,(x-w_i(t))$ with the neighborhod function (Gaussian)
+    $h_{ci}(t)=\exp\!\left(-\frac{\|r_c-r_i\|^2}{2\sigma(t)^2}\right)$. Here $\alpha(t)$ is the learning rate, 
+\end{enumerate}
+\todo{add boldface vectors here and before}
