@@ -31,6 +31,7 @@
 % no paragraph indents:
 \setlength\parindent{0pt}
 
+
 % Use biblatex
 \usepackage[backend=biber,
 natbib=true,
@@ -39,10 +40,13 @@ maxbibnames = 5,
 minbibnames = 4, 
 sorting=none]{biblatex}
 
-\usepackage{csquotes}
-
 \addbibresource{references.bib}
 \setlength\bibitemsep{1.5\itemsep}
+
+
+% Configure "this is a quote" to render correctly
+\usepackage{csquotes}
+\MakeOuterQuote{"}
 
 
 % CODEBLOCKS

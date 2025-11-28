@@ -1,35 +1,4 @@
-Sammons mapping:
-\begin{itemize}
-    \item Sammon mapping weights small distances more strongly, so local neighborhoods matter the most.
-    \item Given $d\in R^D$ we calculate all pairwise distances $d_{ij}=\|x_i-x_j\|$ 
-    \item to achieve a mapping $y\in R^d$ where $d<D$, usually 2, we calculate distances again $d'_{ij}=\|y_i-y_j\|$
-    \item then minimize the cost function $E=\frac{1}{\sum_{i<j}d_{ij}}\sum_{i<j}\frac{(d_{ij}-d'_{ij})^2}{d_{ij}}$. Note that this weighs small distances more (denominator) and the first factor is just normalization
-    \item updates through gradient descent $y_i\leftarrow y_i-\eta\frac{\partial E}{\partial y_i}$
-    \item Optimization is slow (O(N²) distance computations).
-    \item Sensitive to local minima results depend on initialization.
-    \item Less powerful than modern methods like t-SNE
-    \item Preserves distances, especially well small ones
-\end{itemize}
-
-Self organizing maps:
-\begin{itemize}
-    \item Unsupervised Neural network of nerons on a (usually) 2d grid, each of them has a weight vector $w\in R^D$ when the input is $x\in R^D$
-    \item show many samples, for each of them we calculate the best matching unit (BMU) i.e. the closest neuron $\text{BMU}(x)=\arg\min_i\|x-w_i\|$
-    \item The BMU and its neighbors are updated to be more close to the input. The update is based on the distance of the neuron to the BMU 
-    $w_i(t+1)=w_i(t)+\alpha(t)\,h_{ci}(t)\,(x-w_i(t))$ with the neighborhod function (Gaussian)
-    $h_{ci}(t)=\exp\!\left(-\frac{\|r_c-r_i\|^2}{2\sigma(t)^2}\right)$
-    \item This way Nearby neurons on the grid end up representing similar types of inputs.
-    \item So the grid becomes a kind of flattened, simplified version of the input space.
-    \item If two neurons are adjacent on the grid → their prototypes are similar in high-D space.
-    \item Clusters appear as contiguous regions.
-    \item Boundaries between clusters appear as lines or curves on the map.
-    \item Analogy: A SOM grid acts like a rubber sheet with fixed positions (the neuron grid). This sheet is pulled toward data points, but it stays smooth because neurons are connected. The 2D sheet gives a flattened but structurally consistent view of the high-D data.
-    \item an important visulaization is the U-matrix $U(i)=\frac{1}{|N(i)|}\sum_{j\in N(i)}\|w_i-w_j\|$ which contains average distances between each neuron and its neighbors weights (N is amount of neighbors)
-    \item if these are small values are simmilar, if large quite different
-    \item plot as heatmap to see clusters and cluster boundaries
-\end{itemize}
-
-
+\subsection*{Lecture}
 This week's lecture focussed on visualizing high dimensional data and working with data in time series. 
 Especially the first part contained many new things to me, which is why I will put a bigger emphasis on it in the following paragraphs. 
 If data is low dimensional, visualization via histograms, box plots, scatter plots, or other methods is straightforward and has been discussed in the chapters above already. 
@@ -38,12 +7,12 @@ We discussed to examples of dimensionality reduction here, namely Sammon mapping
 These are quite interesting to me, as I only knew about Principal component analysis (which has the disadvantage of being linear) t-SNE prior to this lecture. 
 Both Sammon mapping and SOMs are nonlinear and can therefore capture the usually complex high dimensional manifolds spanned by the data but are still easy to understand. \\
 
-Sammon mapping is based on the idea of pairwise conserving distances in the mapping of input vectors $x\in \mathbb{R}^D$ to output vectors $y\in \mathbb{R}^d$ with $d<D$ (usually $d=2$). 
+Sammon mapping is based on the idea of pairwise conserving distances in the mapping of input vectors $\mathbf{x}\in \mathbb{R}^D$ to output vectors $\mathbf{y}\in \mathbb{R}^d$ with $d<D$ (usually $d=2$). 
 Specifically, the algorithm is constructed such, that small distances are weighted more strongly. 
 This means, it tries to achieve a mapping that preserves local neighborhoods well and therefore preserves grouping of the data points. 
 Sammon mapping follows these steps:
 \begin{enumerate}
-    \item First, pairwise distances between all inputs $d_{ij}=\|x_i-x_j\|$ and all outputs $d'_{ij}=\|y_i-y_j\|$ are calculated. For the first iteration outputs can be initialized randomly. 
+    \item First, pairwise distances between all inputs $d_{ij}=\|\mathbf{x}_i-\mathbf{x}_j\|$ and all outputs $d'_{ij}=\|\mathbf{y}_i-\mathbf{y}_j\|$ are calculated. For the first iteration outputs can be initialized randomly. 
     \item A cost function is calculated as $E=\frac{1}{\sum_{i<j}d_{ij}}\sum_{i<j}\frac{(d_{ij}-d'_{ij})^2}{d_{ij}}$. Note how the denominator leads to a larger weight for small distances. The prefactor is just for normalization.
     \item This cost function is minimized through usual gradient descent and the output mappings are updated as $y_i\leftarrow y_i-\eta\frac{\partial E}{\partial y_i}$, where $\eta$ is a preset learning rate. 
 \end{enumerate} \todo{check equatoins. they differ from lecture}
@@ -51,16 +20,95 @@ The downsides of Sammon mapping include its sensitivity to local minima leading 
 However, it is useful if distances should be preserved well. \\
 
 Self organizing maps are an unsupervised neural network, where neurons are placed on a usually fixed, 2-dimensional grid. 
-Each neuron has a weight vector $w\in \mathbb{R}^D$ when the data is given by $x\in \mathbb{R}^D$. 
+Each neuron has a weight vector $\mathbf{w}\in \mathbb{R}^D$ of the same dimensionality as the data $\mathbf{x}\in \mathbb{R}^D$. 
 The main idea is to find for each input sample (row of the dataset) the closest neuron, i.e. the one where the weight matches closely the input value itself. 
 This neuron and its surrounding are then updated to be more similar to the input. 
 After learning one tries to achieve the situation where each neuron reflects one "typical" input sample with neighboring neurons in the 2-dimensional grid being similar. 
 This way a high dimensional input space is represented in a flattened, although topologically similar space. 
 The following steps are important:
 \begin{enumerate}
-    \item First, the best-matching unit (BMU), the closest neuron, is calculated: $\text{BMU}(x)=\arg\min_i\|x-w_i\|$
-    \item The BMU and its neighbors are updated to be more similar to the input. The update is based on the distance of the neuron to the BMU: 
-    $w_i(t+1)=w_i(t)+\alpha(t)\,h_{ci}(t)\,(x-w_i(t))$ with the neighborhod function (Gaussian)
-    $h_{ci}(t)=\exp\!\left(-\frac{\|r_c-r_i\|^2}{2\sigma(t)^2}\right)$. Here $\alpha(t)$ is the learning rate, 
+    \item First, the best-matching unit (BMU), the closest neuron, is calculated: $\text{BMU}(\mathbf{x})=\arg\min_i\|\mathbf{x}-\mathbf{w}_i\|$
+    \item The BMU and its neighbors are updated to be more similar to the input. The update of neuron $i$ is based on the distance of the neuron to the BMU $c$: 
+    $\mathbf{w}_i(t+1)=\mathbf{w}_i(t)+\alpha(t)\,h_{ci}(t)\,(\mathbf{x}-\mathbf{w}_i(t))$ with the neighborhood function (Gaussian)
+    $h_{ci}(t)=\exp\!\left(-\frac{\|\mathbf{r}_c-\mathbf{r}_i\|^2}{2\sigma(t)^2}\right)$. Here $\alpha(t)$ is the learning rate and $\sigma(t)$ the kernel size, specifying the weighting of distances. 
 \end{enumerate}
 \todo{add boldface vectors here and before}
+After these steps have been repeated for many input samples and the network is trained, similar inputs appear as clusters in the low dimensional representation, while boundaries or gaps in the representation show dissimilar inputs. 
+This can be especially well seen when plotting a heatmap of the so-called U-matrix for neuron $i$, defined as 
+\begin{equation}
+    \mathbf{U}(i)=\frac{1}{|N(i)|}\sum_{j\in N(i)}\|\mathbf{w}_i-\mathbf{w}_j\| 
+    \label{eq:U matrix}
+\end{equation}
+as it contains the average distances between the neuron and its neighbors (The sum ranges over all neighboring neurons). 
+If the entries are small, the values in the neighborhood are quite similar which signals a cluster, while large entries signify the boundary between clusters. \\
+
+The last topic was dealing with time series data as it is quite abundant in environmental data. 
+Most of the topics discussed were nothing new to me as I have learned about them and used them extensively for example during my Bachelors thesis, which is why I will mainly glance over them. 
+First we discussed examples of visualizing time series data to find important structures. 
+We mentioned: 
+\begin{itemize}
+    \item Autocorrelation of the signal. It describes the correlation between the signal and itself for different time lags and can therefore be used to get an intuition about cyclic structures. See \lstinline|numpy.correlate()| for further information.
+    \item Plotting trajectories onto mappings obtained by SOM or Sammon mapping. This seems quite interesting to me, as one should be able to observe, how the data moves between clusters given a certain time lag. 
+    \item Fast-Fourier-transforms (FFTs) to transform the time domain signal into frequency domain. See \lstinline|numpy.fft.rfft()| for real signals. 
+    \item The complex result of an FFT can be visualized as a Periodogram, a real estimate of the power spectral density of the signal by either taking the modulus squared of the FFT result and applying proper normalization or using \lstinline|scipy.signal.periodogram()| directly. This is an important visualization tool, as one can easily identify the most dominant frequencies (like weekly or daily cycles) in the signal as peaks.
+\end{itemize}
+Lastly, we discussed filtering the signal to remove these cycles or slow trends for the further analysis. 
+This can be done by:
+\begin{itemize}
+    \item A simple moving average. In effect this is a convolution of the signal with a boxcar function or a very primitive lowpass. It is rather primitive as high frequencies are not filtered well but very easy to compute in a first step. Better low-, high- and band pass filters are available e.g. in \lstinline|scipy.signal.butter()|, but they have limited usability in environmental data. 
+    \item Seasonal differencing, i.e. subtracting the value one period (day, week, \dots) prior is often used, as both slow trends and the filtered frequency are eliminated. 
+    \item Slow trends can often be extracting by subtracting a fitted line to the data. 
+\end{itemize}
+After filtering one should visualize the data again (e.g. with a Periodogram) to see how the filter affected the data. 
+
+
+\subsection*{Exercise}
+\textbf{1. Import and prepare the data}
+\begin{itemize}
+    \item Air quality data
+    \item Create standardized datetime, cut columns
+\end{itemize}
+
+\textbf{2. Describe distributions and outliers}
+Histograms:
+\begin{itemize}
+    \item Distributions look more or less normal, but ofc cut, if detector cant meas below 0 
+    \item Maybe not normal: PM10, humidity
+    \item Outliers: large No2, PM10, CO values
+    \item No2 much more variable than PM10 which is very peaked with a lot of outliers 
+    \item Changing bin number: many bins oversamples data and fine variability appears: very prominent for 03 100 bins. Harder to tell trends as well as low smoothing. Using less bins averages to much and too much detail is lost eg 10 bins C0. 30 quite reasonable
+\end{itemize}
+Boxplots:
+\begin{itemize}
+    \item Largest IQR is given by 03. It shows high variability in histograms as well. \todo{why}
+    \item Highest median: Humidity, can also be seen in histogram. Seems to be almost exp. peaked at 100
+    \item Most outliers at PM10, then NO2, as expected from histograms
+    \item NO2 has more spread (IQR) but less extreme outliers than PM10
+\end{itemize}
+Scatter plots:
+\begin{itemize}
+    \item 
+\end{itemize}
+
+\textbf{3. Explore temporal patterns}
+\begin{itemize}
+    \item a
+\end{itemize}
+
+\textbf{4. Study relationships between variables}
+\begin{itemize}
+    \item a
+\end{itemize}
+
+\textbf{5. Analyse cycles and dominant frequencies}
+\begin{itemize}
+    \item a
+\end{itemize}
+
+\textbf{6. Use dimensionality reduction}
+\begin{itemize}
+    \item a
+\end{itemize}
+
+
+\subsection*{Reflection}
