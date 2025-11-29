@@ -85,29 +85,59 @@ Boxplots:
     \item Most outliers at PM10, then NO2, as expected from histograms
     \item NO2 has more spread (IQR) but less extreme outliers than PM10
 \end{itemize}
+
+\textbf{4. Study relationships between variables}
 Scatter plots:
 \begin{itemize}
-    \item 
+    \item NO2 vs humidity - slight negative correlatoin. Seems to be heavily influenced be a few outliers at high N02 levels
+    \item Bulk of the cloud quite compact ie no strong correlation. Impossible to say if linear or nonlinear would fit better
+    \item PM10 vs windspeed, slight negative correlation visible. More spread out, less compact
+    \item Temperature and windspeed seem not to be correlated, line mostly flat - Makes sense
+    \item Colorscale plot: strong positive corelation between PM10 and NO2 measurements. They are both anticorrelated with windspeed (high windpeeds at low measurements, maybe better measurement possible if no wind?)
 \end{itemize}
 
 \textbf{3. Explore temporal patterns}
 \begin{itemize}
-    \item a
+    \item First we build sensible datetime objject stamps in the dataframe and sort 
+    \item Informationgain from hourly to daily: More smooth, noise resitent data. Trends (or the lack thereof) are more visible, very high spikes are filtered out
+    \item Clear seasonal trend visible, even better in smoothed data
+\end{itemize}
+Many plots:
+\begin{itemize}
+    \item seasonality definetly present in temperature (peaks in summer), o3 (peaks in spring), pm10 (spikes in winter), humidity (dips in summer)
+    \item Trends extracted with additional linear fits: slight decreases in NO2, PM10, increase in temperature
 \end{itemize}
 
-\textbf{4. Study relationships between variables}
-\begin{itemize}
-    \item a
-\end{itemize}
 
 \textbf{5. Analyse cycles and dominant frequencies}
+Autocorrealtoin function was not given. Implemented as 
+\begin{lstlisting}[language=Python, caption={Implementation of Autocorrelation}, label={lst:autocorr}]
+def autocorr_series(y_ac, max_lag):
+    autocors = np.zeros(max_lag + 1)
+    lags = np.arange(max_lag + 1)
+    for lag in lags:
+        autocors[lag] = y_ac.autocorr(lag=lag)
+    return lags, autocors
+\end{lstlisting}
 \begin{itemize}
-    \item a
+    \item peaks every 24h. More peaks are just higher harmonics, if a pattern reapeats after 1 day, it also repeats after 2
+    \item There seems to be a daily pattern leading to the emission of many particulates. Maybe traffic?
+\end{itemize}
+Periodogramm:
+\begin{itemize}
+    \item peak at 24h  is daily cycle we already saw
+    \item Now we also see a weekly cycle at 168h -> Maybe less traffic at Sundays
+    \item Also peaks at 6, 8, 12 hours
+    \item Very similar for 03, although more pronounced 12h peak WHA?
+    \item NO2 quite similar to PM10
 \end{itemize}
 
 \textbf{6. Use dimensionality reduction}
+Sammon map 
 \begin{itemize}
-    \item a
+    \item No clear clusters for NO2
+    \item Also not temp, windspeed, PM10, 03\dots
+    \item smaller z score removes more outliers
 \end{itemize}
 
 
