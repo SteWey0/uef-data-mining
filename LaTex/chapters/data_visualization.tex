@@ -63,55 +63,60 @@ After filtering one should visualize the data again (e.g. with a Periodogram) to
 
 
 \subsection*{Exercise}
-\textbf{1. Import and prepare the data}
-\begin{itemize}
-    \item Air quality data
-    \item Create standardized datetime, cut columns
-\end{itemize}
+This week's exercise was about comparing different visualization techniques and finding out, what information they provide about a sample dataset. 
+Here, an air quality dataset was provided. 
+The data is imported as a \lstinline|pandas| dataframe and an additional standardized time column is created. 
+Then four main topics are covered: First the distributions and outliers are analyzed using histograms and box plots, then the relations between variables are examined with scatter plots. 
+After this, temporal patters are investigated using smoothing, autocorrelations and periodograms and lastly dimensionality reduction is used. \\
 
-\textbf{2. Describe distributions and outliers}
-Histograms:
-\begin{itemize}
-    \item Distributions look more or less normal, but ofc cut, if detector cant meas below 0 
-    \item Maybe not normal: PM10, humidity
-    \item Outliers: large No2, PM10, CO values
-    \item No2 much more variable than PM10 which is very peaked with a lot of outliers 
-    \item Changing bin number: many bins oversamples data and fine variability appears: very prominent for 03 100 bins. Harder to tell trends as well as low smoothing. Using less bins averages to much and too much detail is lost eg 10 bins C0. 30 quite reasonable
-\end{itemize}
-Boxplots:
-\begin{itemize}
-    \item Largest IQR is given by 03. It shows high variability in histograms as well. \todo{why}
-    \item Highest median: Humidity, can also be seen in histogram. Seems to be almost exp. peaked at 100
-    \item Most outliers at PM10, then NO2, as expected from histograms
-    \item NO2 has more spread (IQR) but less extreme outliers than PM10
-\end{itemize}
+Looking only at the histograms one can see, that most distributions look more or less Gaussian when on keeps in mind that they are sometimes cut due to unphysical values. 
+However, especially the PM10, as well as the humidity values seem to follow a different distribution. 
+Additionally, one can see that many outliers are present in the NO$_2$, PM10 and CO histograms. 
+These are visible as long tails with only a few entries in each bin. 
+It seems also, that NO$_2$ is more variable than PM10, which is more peaked but also has larger outliers. 
+Through changing the bin number, I was able to find that undersampling the data by using too few bins is not good, as much detail is lost, and it is hard to see a trend and outliers this way. 
+On the other hand increasing the bin number too much is also not good as fine variability in the data starts to appear, which makes interpretation harder. 
+Having some amount of averaging by collecting the data in e.g. 30 bins seems optimal. \\
+Next, I took a look at the box plots of the same data shown in \autoref{fig:plots/e3_box.pdf}. 
+\begin{figure}[htb]
+    \centering
+    \includegraphics{plots/e3_box.pdf}
+    \caption{The boxplots of the air quality dataset are shown.}
+    \label{fig:plots/e3_box.pdf}
+\end{figure}
+These unveiled that O$_3$ has the largest interquartile range (IQR), which could also be seen in the very broad histogram. 
+This could be due to the amount of ozone in the atmosphere changing a lot (e.g. during the seasons) instead of staying at a more or less fixed level. 
+The highest median is present in the humidity data, which was expected from the histogram already as well, as it seems to be nearly exponentially peaked at 100\%. 
+The box plots excel at showing the spread and amount of outliers. 
+It is immediately clear that PM10 and NO$_2$ have the largest amount of outliers in the dataset -- This was way harder to see when I looked at the histograms. 
+Comparing the both one can see that while NO$_2$ has a larger IQR, it has less extreme outliers than PM10. \\
 
-\textbf{4. Study relationships between variables}
-Scatter plots:
-\begin{itemize}
-    \item NO2 vs humidity - slight negative correlatoin. Seems to be heavily influenced be a few outliers at high N02 levels
-    \item Bulk of the cloud quite compact ie no strong correlation. Impossible to say if linear or nonlinear would fit better
-    \item PM10 vs windspeed, slight negative correlation visible. More spread out, less compact
-    \item Temperature and windspeed seem not to be correlated, line mostly flat - Makes sense
-    \item Colorscale plot: strong positive corelation between PM10 and NO2 measurements. They are both anticorrelated with windspeed (high windpeeds at low measurements, maybe better measurement possible if no wind?)
-\end{itemize}
+Using scatter plots like the one shown in \autoref{fig:plots/e3_scatter.pdf} correlations between variables were examined next. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e3_scatter.pdf}
+    \caption{One scatter plot indicating correlation between variables is shown as an example.}
+    \label{fig:plots/e3_scatter.pdf}
+\end{figure}
+When examining NO$_2$ and humidity, I could see a slight negative correlation, as the slope of a fitted line is negative. 
+As there are many outliers in the NO$_2$ data which seem to influence the fit substantially, but the bulk of the data seems to be quite compact in a cloud, this simple fit does not yet provide compelling evidence in my opinion yet. 
+One should maybe try to remove and quantify outliers first, before repeating the analysis. 
+No clear trend can be seen when looking at the correlation between wind speed and the temperature columns. 
+On the other hand, a strong positive correlation can be seen in \autoref{fig:plots/e3_scatter.pdf}, where PM10 seems to increase quite linearly with rising NO$_2$ levels over the whole measurement range. 
+Using an additional color scale one can also see a strong anticorrelation between the wind speed and the NO$_2$ measurement. 
+While PM10 and wind speed also seem slightly anticorrelated, this is less evident here, which can also be seen when looking at the two columns separately. \\
 
-\textbf{3. Explore temporal patterns}
-\begin{itemize}
-    \item First we build sensible datetime objject stamps in the dataframe and sort 
-    \item Informationgain from hourly to daily: More smooth, noise resitent data. Trends (or the lack thereof) are more visible, very high spikes are filtered out
-    \item Clear seasonal trend visible, even better in smoothed data
-\end{itemize}
-Many plots:
-\begin{itemize}
-    \item seasonality definetly present in temperature (peaks in summer), o3 (peaks in spring), pm10 (spikes in winter), humidity (dips in summer)
-    \item Trends extracted with additional linear fits: slight decreases in NO2, PM10, increase in temperature
-\end{itemize}
-
-
-\textbf{5. Analyse cycles and dominant frequencies}
-Autocorrealtoin function was not given. Implemented as 
-\begin{lstlisting}[language=Python, caption={Implementation of Autocorrelation}, label={lst:autocorr}]
+Next, I looked at temporal patters in the data. 
+For this we started with cleaning the date time column and sorting it ascendingly. 
+Then I looked at a simple rolling average filter taken over 24 hours to smooth daily fluctuations. 
+This leads to more smooth, noise resistant curves where trends (or the lack thereof) can be seen more clearly. 
+After smoothing the data seasonal trends can be easily seen in the temperature (peaks in summer), O$_3$ (peaks in spring), PM10 (spikes in the winter) and humidity (dips in summer). 
+I could also spot a gradual increase in temperature and decrease in NO$_2$ and PM10 levels over the years by using averaging and a linear fit. 
+This simple example shows, that although a rolling average filter is quite primitive, it can help extract interesting insights to the data quickly and can therefore be used as a straightforward first step. \\
+The next task was to look at the autocorrelation of the signal. 
+For this a function \lstinline|autocorr_series()| is called in the provided code but is not defined there. 
+I implemented it myself as follows: 
+\begin{lstlisting}[language=Python, caption={Implementation of \lstinline|autocorr_series| function}, label={lst:autocorr}]
 def autocorr_series(y_ac, max_lag):
     autocors = np.zeros(max_lag + 1)
     lags = np.arange(max_lag + 1)
@@ -119,26 +124,48 @@ def autocorr_series(y_ac, max_lag):
         autocors[lag] = y_ac.autocorr(lag=lag)
     return lags, autocors
 \end{lstlisting}
-\begin{itemize}
-    \item peaks every 24h. More peaks are just higher harmonics, if a pattern reapeats after 1 day, it also repeats after 2
-    \item There seems to be a daily pattern leading to the emission of many particulates. Maybe traffic?
-\end{itemize}
-Periodogramm:
-\begin{itemize}
-    \item peak at 24h  is daily cycle we already saw
-    \item Now we also see a weekly cycle at 168h -> Maybe less traffic at Sundays
-    \item Also peaks at 6, 8, 12 hours
-    \item Very similar for 03, although more pronounced 12h peak WHA?
-    \item NO2 quite similar to PM10
-\end{itemize}
+The autocorrelation shows peaks every 24 hours, indicating a daily cycle in the PM10 values. 
+It should be noted that all peaks at multiples of 24 hours are just higher harmonics that stem from the fact that any 24 hour regularity in the signal also means there are 48,72,\dots hour regularities. 
+In other words: If a value is similar the next day, it is again similar in two days. 
+This shows there is a daily pattern in the emission of small particulates. 
+This could for example be due to traffic, which also has daily repeating patters (many cars during rush hour, few in the night). \\
+More information is revealed when looking at the periodogram of the PM10 data, which is shown in \autoref{fig:plots/e3_periodogram.pdf}. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e3_periodogram.pdf}
+    \caption{The periodogram of the PM10 data is shown.}
+    \label{fig:plots/e3_periodogram.pdf}
+\end{figure}
+Clear peaks can be seen at 8, 12, 24 and 168 hours period. 
+This indicates that additional to the daily cycle, there are also cycles that are a third, half and 7 days long. 
+Following the traffic-hypothesis as an explanation to the PM10 cycles, the weekly cycle could be due to Sundays having generally less traffic as most people do not need to work. 
+The small 8 and 12-hour cycles could maybe be explained by a peak in traffic during the morning and evening, before and after the 8-12 hour work day is completed. 
+These are however of course only hypotheses which need further testing and more data to be tested. 
+As an example, testing a possible correlation between traffic and this air quality data could be rather interesting. 
+Ozone and nitrogen dioxide data show similar cycles as the PM10 data, although ozone has a much more pronounced 12-hour cycle. 
+This could be due to how ozone is created in the atmosphere. \\
 
-\textbf{6. Use dimensionality reduction}
-Sammon map 
-\begin{itemize}
-    \item No clear clusters for NO2
-    \item Also not temp, windspeed, PM10, 03\dots
-    \item smaller z score removes more outliers
-\end{itemize}
-
+As a last exercise, a 2-dimensional Sammon plot has been created. 
+As the underlying algorithm tries to keep distances (especially small ones) similar when encoding, one expects that close data points remain close even after the mapping to 2D. 
+I have tried many different settings and plotting color scales for all different columns of the dataframe, however after encoding no clear clusters emerged from the data. 
+Instead, the map produces quite spread out, seemingly random points, indicating low clustering in the data. 
+Through changing the z-score value, I was able to verify that a smaller z-score can be used to remove more outliers. 
 
 \subsection*{Reflection}
+I found this weeks material to be quite interesting again. 
+Especially the topics about dimensionality reduction were quite new to me. 
+Handling time series data has been something I have done a lot during my prior studies, so I was quite familiar with Fourier transforms and correlations between signals already, still it was nice seeing it applied again in a slightly different manner. 
+However, I found the exercises this week to be a bit too long. 
+Instead of having this many tasks I feel like it would have been more interesting to focus on a few applications specifically and go more into depth about them. 
+Besides the one missing function implementation (see \autoref{lst:autocorr}), nothing needed to be programmed. 
+For me, the concepts of this week would have been better internalized, if I had been confronted with the (maybe already cleaned and sorted) dataset, and were asked to perform simple steps like a Fourier transform myself, i.e. if the provided notebook would serve more as a guide and less as finished implementation of the data mining process. 
+However, I see that this may be difficult to realize due to different programming backgrounds of the students. 
+I also think, that fewer questions would have sufficed, as it is rather difficult to answer them all on only 2 pages or so. 
+For me this is especially true as the questions often dealt with the specific air quality dataset at hand which while interesting, should not be the main focus of the exercise in my opinion. 
+Instead, it would have been more illustrative to learn about the Data Mining tools themselves more, by programming a bit on my own or needing to compare different approaches, as these tools can be applied to many forms of data. \\
+This week I managed to structure my learning better again. 
+I did a little each day, which definitely helped my understanding and in answering the questions for the exercises. 
+However, I underestimated the amount of time needed for the exercises by a lot this week. 
+As they were a fair bit longer this week, it got quite tight to the end and I needed to work quite a lot two days. 
+Next week I should try to plan more time for the exercise. 
+However, I am quite happy with my progress in general, as I up to now succeeded in working through the lectures, exercises and writing the diary each week without procrastinating. 
