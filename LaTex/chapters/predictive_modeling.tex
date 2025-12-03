@@ -1,0 +1,42 @@
+In this weeks lecture we discussed validation for regression models or classifiers, performance indicators (both visually and numerically), linear regression and the basics behind neural networks (NNs), especially mulitlayer perceptrons (MLPs). 
+As all topics have been a large part in prior courses I took, I will focus on giving a rough overview and highlighting approaches that are new to me and especially interesting. \\
+
+We started by contrasting different validation approaches which is very important, as evaluating any model on data that has been used in \emph{constructing} the model usually leads to a much too optimistic performance. 
+This is true both for machine learning task (where I were quite aware that validation sets are important) but also when doing simple regression. 
+% Splitting vlaidation sets when fitting to obtain a measure how good the fit generalised is not something I needed to do prior. 
+% This approach is therefore quite interesting for me. 
+Splitting validation data from the training set can be done in different ways. 
+For example one can perform hold-out validation, which means simply splitting the dataset into training and testing sets. 
+The training set is used for constructing the model, while the testing set is used purely for evaluation. 
+This approach is simple and fast, but the model performance is usually underestimated as the data used was not used for training. 
+Another approach is k-fold cross-validation, where data is split into $k$ clusters. 
+Training is done on $k-1$ clusters, the remaining one is used for validation. 
+Then the the validation cluster is cycled through the whole dataset, such that in the end every cluster has been used for training and validation. 
+The overall performance is then the mean of all cluster performances. 
+As a special case of k-fold cross validation one can also divide the data in as many clusters, as there are data points. 
+This is then called leave-one-out cross-validation. 
+It is numerically more expensive and usually provides an estimate that is too optimistic, but may be the best approach when the data sets are small. \\
+
+We then went on to talk about performance indicators to evaluate the models we construct. 
+A very simple approach is to use graphical methods that compare the model output with the observations themselve. 
+This can be done using scatter plots or simple line graphs where the model and data are plotted on top of each other. 
+I additionally used an approach extensively for lab courses I did in the past which was not covered in the material. 
+When using regression, one can look at fit residuals, meaning the difference between the fit and data value. 
+If a fit describes the data well, these residuals should be centred around zero and have a spread described by a chi-squared distribution. 
+If one instead wants to evalute the performance of a model numerically, one could look at the mean error, mean squared error or root mean squared error. 
+These are shown in \autoref{eq:me, mae, rmse} from left to right. 
+\begin{align}
+    \mathrm{ME} &= \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i) & \mathrm{MAE} &= \frac{1}{n} \sum_{i=1}^n |y_i - \hat{y}_i| & \mathrm{RMSE} &= \sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2}
+    \label{eq:me, mae, rmse}
+\end{align}
+Here $y_i$ is a data point, $\hat{y}_i$ the model prediction and $n$ the total amount of data points. 
+They all are of the same unit as the data itself and are therefore well interpretable. 
+One can use the mean error to find the averaged signal deviation together with its direction, meaning one can find whether the model over- or underestimates the data. 
+The MAE omits the directionality. 
+Most often the RMSE is used however, as the squaring of the deviation has the nice property that large deviations contribute more to the error. 
+One can also decompose the RMSE into statistical and systematic components. 
+Other approaches we discussed where the coefficient of determination or $R^2$ value, and the index of agreement (IOA). 
+The index of agreement is widely used, as it is unitless and lies between 0 and 1. 
+It therefore allows for and easy comparison between different models. 
+An index of agreement of 1 indicates a perfect model and one below $0.4$ indicates worse performance than random guessing. 
+It is best practise to look at the IOA and RMSE together to find out if a model performs suitably well. 
