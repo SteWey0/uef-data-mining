@@ -1,0 +1,77 @@
+This weeks lecture dealt with clustering data. 
+Clusters represent continuous regions in a $p$-dimensional space with high data density, separated by regions of lower density. 
+They are characterized by their density, variance, shape, and separation. 
+Clustering is needed to discover patterns in the data, compress it, or detect anomalies. 
+We discussed 3 different algorithms this week and the need for validation. 
+These algorithms belong to the following classes:
+\begin{itemize}
+        \item \textbf{Sequential algorithms}: These are usually quite fast and process points in their order of appearance. We discussed nearest neighbor (NN) clustering. 
+        \item \textbf{Hierarchical algorithms}: These build a dendrogram (a tree of nested clusters by either agglomerating or dividing the data into groups. 
+        \item \textbf{Optimization algorithms}: These define a cost function that is iteratively optimized. We discussed k-means. These algorithms are usually well scalable and suited for large datasets. 
+\end{itemize}
+All algorithms work differently and have their up- and downsides, which are discussed in the following. 
+I focus here on giving a more qualitative view, as most algorithms are already implemented in Python libraries, and it makes understanding much simpler. \\
+
+The core idea of NN-clustering is that points that are close in space should belong to the same cluster.
+The procedure is as follows:
+\begin{enumerate}
+        \item Present vectors one at a time.
+        \item For each new vector $\mathbf{x}_i$, find nearest already clustered point $\mathbf{x}_m$.
+        \item If $d(\mathbf{x}_i,\mathbf{x}_m) \leq \tau$ (threshold), assign to that cluster. Otherwise, create a new cluster.
+ \end{enumerate}
+One can use different metrics to quantify distance, but usually the Euclidean distance is used. 
+The strength of this algorithm is that it is easy, fast and one does not need a predefined number of clusters. 
+However, the result is strongly dependent on input order, highly sensitive to the chosen threshold and tends to loose the global view of the data as only local similarity is used in the metric. 
+It is also prone for chaining together neaarby data points and bridge different clusters. 
+\todo{anything else?}\\
+
+The main idea behind hierarchical clustering is to build a dendrogram based on pairwise distances. 
+Our discussion focused on the agglomerative approach where starting with singletons more and more clusters are merged based on distances. 
+The algorithm is as follows:
+\begin{enumerate}
+    \item Compute initial distance matrix $D$.
+    \item Repeatedly merge the two clusters with minimum inter-cluster distance.
+    \item Update distance matrix using chosen linkage criterion.
+\end{enumerate}
+There are different linkage criteria such as single, complete and average linking. 
+The strength of hierarchical clustering is that it produces a full hierarchy instead of single partitions. 
+However it is computationally quite expensive, it cannot undo early, unideal merges, and is sensitive to the chosen distance metric and linkage choice. 
+To me it seems, that it may be a sensible algorithm as a first choice for small datasets as the full structure may offer additional insights that can be explored further. \\
+
+The last algorithm we discussed is the k-means algorithm, an optimization based approach, meaning that the data is partitioned into $k$ groups by iterative optimization. 
+It works roughly as follows:
+\begin{enumerate}
+    \item Initialize $k$ centers (randomly).
+    \item Assign each point to nearest center.
+    \item Update centers as means of assigned points.
+    \item Repeat until assignments no longer change.
+\end{enumerate}
+It is comparably fast and scalable to large datasets and produces compact clusters when data is roughly spherical. 
+The algorithm is however not well suited for data that is not spherical, struggels with overlapping groups and outliers and is sensitive to initialization. 
+Additionally specifying the number of clusters beforehand is required. 
+This can be however optimized during the clustering validation, which we discussed next. \\
+
+Validation of the clustering result is extremely important as the procedures are unsupervised and usually require user inputs like the amount of centers $k$, linkage criteria or distance metrics. 
+It is therefore important to find out whether clustering worked well or not. 
+Validation can be done externally (if known labels are present), internally (measure compactness statistically) and relatively (compare clusterings obtained by the same algorithm for different parameters). 
+We focused on the relative scheme, which to me also seems to be the most applicable as it can be used for all data regardless of labels. 
+For algorithms requiring some input number $n_c$ (for example $n_c=k$ for k-means) validation looks like this:
+\begin{enumerate}
+    \item Choose a range of numbers $n_c \in [n_{\min}, n_{\max}]$.
+    \item For each $n_c$, run the clustering algorithm $r$ times  
+          (different random initializations).
+    \item Compute a validity index for each run.
+    \item For each $n_c$, keep the best index value.
+    \item Plot the index value against $n_c$ and select the best.
+\end{enumerate}
+The best number is usually the one where the index either changes sharply or has a minima or maxima. 
+I find it very interesting, that using validation one can also find out, whether the data possesses cluster structure at all. 
+If the index does not seem to change at all, this would suggest data that is not clustered. 
+We discussed two different validity indexes. 
+The Davies-Bouldin-Index (DB-index) shows the average similarity between clusters. 
+Naturally, for the clustering to have worked well, one wants a minimum in the index. 
+It is especially good for comparing clusters with different $k$ during k-means clustering as it captures spherical, separated clusters best. 
+Additionally one can also use the Silhouette measure which assesses how well each data points fits into its assigned cluster. 
+It is ranged between -1 and 1 where a large positive value indicates that the point is much closer to its own cluster than to any other (good clustering), while a value of -1 means the opposite and that the point is probably misclassified. 
+To compare clustering, one can use a Silhouette plot which visually shows outliers as negative values and whether some clusters might be overlapping or poorly defined. 
+In practice, it is best to use both indices and look for an agreement between them. 
