@@ -39,4 +39,37 @@ Other approaches we discussed where the coefficient of determination or $R^2$ va
 The index of agreement is widely used, as it is unitless and lies between 0 and 1. 
 It therefore allows for and easy comparison between different models. 
 An index of agreement of 1 indicates a perfect model and one below $0.4$ indicates worse performance than random guessing. 
-It is best practise to look at the IOA and RMSE together to find out if a model performs suitably well. 
+It is best practise to look at the IOA and RMSE together to find out if a model performs suitably well. \\
+
+Next we discussed linear regression as a means of fitting curves with some free parameters to data. 
+The summary here is again more qualitative, as fitting algorithms are implemented in many different Python packages and can easily be used. 
+The idea behind fitting is to minimize the sum of all squared residuals, i.e. find parameters $a,b,c,\dots$ such that the following expression becomes minimal:
+\begin{equation}
+    \sum_{i=1}^N \left(\hat{y}_i\left(a,b,c,\dots\right) - y_i\right) ^2
+\end{equation}
+Here $\hat{y}$ denotes the model output again. 
+How this minimization is done in practice is quite interesting in and of itself, but will not be explained further here. 
+Uses of linear regression are to fit for example linear functions in order to extract simple trends from the data. 
+But more complicated functions like the sum of different harmonics with prominent frequencies extracted from e.g. a periodogram can also be fitted to clean the data of yearly, weekly or hourly trends before further analysis. 
+When doing this complicated fit with necessarily many free parameters, one should be careful to always use model validation to see if there is overfitting. 
+Lastly there are also autoregressive models which employ a sort of "memory" to handle time series data better. 
+An expansion of this are so called ARX models, which can handle the time series structure of different data columns simultaneously. 
+I have never actually worked with such models, but they seems incredibly useful for the time series data that is usually present in environmental science. \\
+
+During the last part of the lecture we had a quick introduction to neural networks with the example of a multilayer perceptron. 
+This is a densely connected neural network that has one input layer and an output layer. 
+Each node in the vector is assigned a weight vector and each layer provides an additional bias. 
+The feed forward pass through the network updates each neuron in layer $j$ by performing a weighted sum of all neurons in the previous layer $j-1$ as such:
+\begin{equation}
+    x^{(j)} = \varphi\left(\sum_{\mathrm{n}} w_n^{(j-1)} x_n^{(j-1)}+b^{(j-1)}\right)
+\end{equation}
+Here $\varphi$ is a nonlinear activation function, the sum ranges over all neurons labelled $n$ in the previous layer, weights are denoted as $w$ and the bias as $b$. 
+After showing the network a sample (or a batch of samples), one trains the network to perform better. 
+Training works by so called gradient descent during backpropagation. 
+The idea is that a so called loss function, a function that shows the deviation of the networks output from its desired output, is differentiated with respect to the model parameters. 
+These are then updated towards the direction of steepest descent, meaning the model is adjusted such, that the output gets more closer to the desired output. 
+Further details are omitted here again. 
+For training neural networks, validation is extremely important, especially because they can become quite prone to overfitting. 
+To mitigate this, one should also experiment with the number of neurons of the network and their dimensionality and not set it too high. 
+From my experience the best way to advance when it comes to machine learning is just to experiment, try different architectures, cost functions, activations and number of free parameters and see what works best. 
+
