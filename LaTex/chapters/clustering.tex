@@ -1,3 +1,4 @@
+\subsection*{Lecture}
 This weeks lecture dealt with clustering data. 
 Clusters represent continuous regions in a $p$-dimensional space with high data density, separated by regions of lower density. 
 They are characterized by their density, variance, shape, and separation. 
@@ -75,3 +76,53 @@ Additionally one can also use the Silhouette measure which assesses how well eac
 It is ranged between -1 and 1 where a large positive value indicates that the point is much closer to its own cluster than to any other (good clustering), while a value of -1 means the opposite and that the point is probably misclassified. 
 To compare clustering, one can use a Silhouette plot which visually shows outliers as negative values and whether some clusters might be overlapping or poorly defined. 
 In practice, it is best to use both indices and look for an agreement between them. 
+
+\subsection*{Exercise}
+This weeks exercise was a small hands on example of the workflow behind clustering data based on the \lstinline{toolo.csv} dataset. 
+After loading the data that was already used in exercise 1, we explored different ways of normalizing the entries first. 
+For this we looked at variance, minmax, and euclidean scaling (meaning dividing each row by its L2 norm). 
+To see which pre-transform worked best, we then used different metrics. 
+For a start the DB and Silhouette indices are calculated and tabulated. 
+After this k-mean clustering with 7 clusters is employed to compare Sammon maps, boxplots and Silhouette plots graphically. 
+All three methods agree that Euclidean scaling is best suited for the dataset at hand. 
+Firstly, the calculated Silhouette index is largest for Euclidean scaling and the calculated DB-index is smallest. 
+Although the difference to the other normalization idices is quite small (roughly in the range of 0.1 for both) it is already a good indication, that Euclidean normalization might be best suited. 
+Additionally the obtained Sammon mappings show clearly, that the clusters are very tight together for minmax and variance scaling, while they cover a much larger parameter space in the mapping for Euclidean normalization. 
+The distributions of the different variables seem to show a similar variability as well when using L2-normalization. 
+Lastly, when looking at the Silhouette plots, one can see, that for Euclidean normalization nearly all scores are positive and clusters are well separated. 
+For the following tasks, I will therefore use Euclidean normalization. 
+The Silhouette plot also suggests that there may be some overlap between clusters 5 and 6, as they are less clearly separated than the other clusters. 
+The Sammon embedding suggests mostly spherical/globular clusters, although there are also some outliers. 
+All in all, I think k-mean clustering is well suited. \\
+
+Having decided on preprocessing method and clustering technique, the next sensible step is to find the best number of clusters by comparing the resulting DB-indices. 
+\todo{fig}
+As can be seen, 2 clusters seems to work best. 
+This is also true for different random initializations, the algorithm seems quite stable. 
+As the code has been designed to work with the lowest DB-index and start the search with two clusters, I will therefore do all following analysis with 2 clusters. 
+I will reflect if this is sensible in the end. \\
+
+In the last step we looked at the temporal evolution of the clusters. 
+\todo{fig}
+As can be seen, the 2 clusters can be easily understood. 
+One corresponds to the periods where high emission of pollutants was present, while the other corresponds to low emission periods. 
+This makes intuitive sense: If only two clusters are available periods where there are correlated high emissions (e.g. because of traffic) belong to one group, while the opposite belongs to the other. 
+I think this traffic behavior is exactly what can be seen in the cluster time evolution. 
+One could therefore give the clusters the labels "high emission" and "low emission". 
+From the analysis of just two clusters not a whole lot of insights can be gained. 
+One could inspect times of high pollution and try to find policies against that by correlating these times with processes that might be happening. 
+Further analysis, like the correlation with traffic data, is needed. 
+
+
+\subsection*{Reflection}
+The lecture material this week was quite interesting, as it was something completely new to me. 
+It felt like it fit well with the topics prior to and after that. 
+The exercises were also a great addition to the lectures. 
+I liked to be able to play around a bit with different normalizations and amount of clusters. 
+However, I think that more interesting insights on the data could be gained when clustering into more than two groups is enforced. 
+In the beginning I was quite surprised, that two clusters had such a low DN-score and performed best.
+However, after looking at the time traces and visualizing some data it became clear to me, why that is the case. 
+Although one could maybe say that 2 clusters did not really provide much insight, this did still help me understand clustering and plotting the time traces quite a lot by working through my initial confusion. 
+Learning and writing the diary was a bit hectic for me this week. 
+AS my studies as an exchange student soon reach an end, I tried to fit more than one week of lectures and exercises into this week, which made it rather challenging. 
+Still, I am quite happy with my progress. 
