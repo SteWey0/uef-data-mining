@@ -1,5 +1,5 @@
 \subsection*{Lecture}
-This weeks lecture dealt with clustering data. 
+This week's lecture dealt with clustering data. 
 Clusters represent continuous regions in a $p$-dimensional space with high data density, separated by regions of lower density. 
 They are characterized by their density, variance, shape, and separation. 
 Clustering is needed to discover patterns in the data, compress it, or detect anomalies. 
@@ -22,9 +22,8 @@ The procedure is as follows:
  \end{enumerate}
 One can use different metrics to quantify distance, but usually the Euclidean distance is used. 
 The strength of this algorithm is that it is easy, fast and one does not need a predefined number of clusters. 
-However, the result is strongly dependent on input order, highly sensitive to the chosen threshold and tends to loose the global view of the data as only local similarity is used in the metric. 
-It is also prone for chaining together neaarby data points and bridge different clusters. 
-\todo{anything else?}\\
+However, the result is strongly dependent on input order, highly sensitive to the chosen threshold and tends to lose the global view of the data as only local similarity is used in the metric. 
+It is also prone for chaining together nearby data points and bridge different clusters. \\
 
 The main idea behind hierarchical clustering is to build a dendrogram based on pairwise distances. 
 Our discussion focused on the agglomerative approach where starting with singletons more and more clusters are merged based on distances. 
@@ -36,25 +35,25 @@ The algorithm is as follows:
 \end{enumerate}
 There are different linkage criteria such as single, complete and average linking. 
 The strength of hierarchical clustering is that it produces a full hierarchy instead of single partitions. 
-However it is computationally quite expensive, it cannot undo early, unideal merges, and is sensitive to the chosen distance metric and linkage choice. 
-To me it seems, that it may be a sensible algorithm as a first choice for small datasets as the full structure may offer additional insights that can be explored further. \\
+However, it is computationally quite expensive, it cannot undo early, unideal merges, and is sensitive to the chosen distance metric and linkage choice. 
+To me, it seems, that it may be a sensible algorithm as a first choice for small datasets as the full structure may offer additional insights that can be explored further. \\
 
 The last algorithm we discussed is the k-means algorithm, an optimization based approach, meaning that the data is partitioned into $k$ groups by iterative optimization. 
 It works roughly as follows:
 \begin{enumerate}
     \item Initialize $k$ centers (randomly).
-    \item Assign each point to nearest center.
+    \item Assign each point to the nearest center.
     \item Update centers as means of assigned points.
     \item Repeat until assignments no longer change.
 \end{enumerate}
 It is comparably fast and scalable to large datasets and produces compact clusters when data is roughly spherical. 
-The algorithm is however not well suited for data that is not spherical, struggels with overlapping groups and outliers and is sensitive to initialization. 
+The algorithm is however not well suited for data that is not spherical, struggles with overlapping groups and outliers and is sensitive to initialization. 
 Additionally specifying the number of clusters beforehand is required. 
 This can be however optimized during the clustering validation, which we discussed next. \\
 
 Validation of the clustering result is extremely important as the procedures are unsupervised and usually require user inputs like the amount of centers $k$, linkage criteria or distance metrics. 
 It is therefore important to find out whether clustering worked well or not. 
-Validation can be done externally (if known labels are present), internally (measure compactness statistically) and relatively (compare clusterings obtained by the same algorithm for different parameters). 
+Validation can be done externally (if known labels are present), internally (measure compactness statistically) and relatively (compare clustering obtained by the same algorithm for different parameters). 
 We focused on the relative scheme, which to me also seems to be the most applicable as it can be used for all data regardless of labels. 
 For algorithms requiring some input number $n_c$ (for example $n_c=k$ for k-means) validation looks like this:
 \begin{enumerate}
@@ -72,44 +71,67 @@ We discussed two different validity indexes.
 The Davies-Bouldin-Index (DB-index) shows the average similarity between clusters. 
 Naturally, for the clustering to have worked well, one wants a minimum in the index. 
 It is especially good for comparing clusters with different $k$ during k-means clustering as it captures spherical, separated clusters best. 
-Additionally one can also use the Silhouette measure which assesses how well each data points fits into its assigned cluster. 
+Additionally, one can also use the Silhouette measure which assesses how well each data points fits into its assigned cluster. 
 It is ranged between -1 and 1 where a large positive value indicates that the point is much closer to its own cluster than to any other (good clustering), while a value of -1 means the opposite and that the point is probably misclassified. 
 To compare clustering, one can use a Silhouette plot which visually shows outliers as negative values and whether some clusters might be overlapping or poorly defined. 
 In practice, it is best to use both indices and look for an agreement between them. 
 
 \subsection*{Exercise}
-This weeks exercise was a small hands on example of the workflow behind clustering data based on the \lstinline{toolo.csv} dataset. 
+This week's exercise was a small hands-on example of the workflow behind clustering data based on the \lstinline{toolo.csv} dataset. 
 After loading the data that was already used in exercise 1, we explored different ways of normalizing the entries first. 
-For this we looked at variance, minmax, and euclidean scaling (meaning dividing each row by its L2 norm). 
+For this we looked at variance, minmax, and Euclidean scaling (meaning dividing each row by its L2 norm). 
 To see which pre-transform worked best, we then used different metrics. 
 For a start the DB and Silhouette indices are calculated and tabulated. 
-After this k-mean clustering with 7 clusters is employed to compare Sammon maps, boxplots and Silhouette plots graphically. 
+After this k-mean clustering with 7 clusters is employed to compare Sammon maps, box plots and Silhouette plots graphically. 
 All three methods agree that Euclidean scaling is best suited for the dataset at hand. 
 Firstly, the calculated Silhouette index is largest for Euclidean scaling and the calculated DB-index is smallest. 
-Although the difference to the other normalization idices is quite small (roughly in the range of 0.1 for both) it is already a good indication, that Euclidean normalization might be best suited. 
-Additionally the obtained Sammon mappings show clearly, that the clusters are very tight together for minmax and variance scaling, while they cover a much larger parameter space in the mapping for Euclidean normalization. 
+Although the difference to the other normalization indices is quite small (roughly in the range of 0.1 for both) it is already a good indication, that Euclidean normalization might be best suited. 
+Additionally, the obtained Sammon mappings show clearly, that the clusters are very tight together for minmax and variance scaling, while they cover a much larger parameter space in the mapping for Euclidean normalization. 
+This can be seen in \autoref{fig:plots/e4_sammon.pdf}. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e4_sammon.pdf}
+    \caption{The obtained Sammon mapping of 7 clusters is shown for Euclidean normalization. Note that clusters are well separated and A large parameter space is used. This is not the case for other scalings.}
+    \label{fig:plots/e4_sammon.pdf}
+\end{figure}
 The distributions of the different variables seem to show a similar variability as well when using L2-normalization. 
 Lastly, when looking at the Silhouette plots, one can see, that for Euclidean normalization nearly all scores are positive and clusters are well separated. 
 For the following tasks, I will therefore use Euclidean normalization. 
-The Silhouette plot also suggests that there may be some overlap between clusters 5 and 6, as they are less clearly separated than the other clusters. 
+The Silhouette plot also suggests that there may be some overlap between clusters 5 and 6, as they are less clearly separated than the other clusters, which can be seen in the attached plot (\autoref{fig:plots/e4_silhouette.pdf}). 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e4_silhouette.pdf}
+    \caption{The Silhouette plot when using seven clusters and Euclidean normalization is shown.}
+    \label{fig:plots/e4_silhouette.pdf}
+\end{figure}
 The Sammon embedding suggests mostly spherical/globular clusters, although there are also some outliers. 
 All in all, I think k-mean clustering is well suited. \\
 
 Having decided on preprocessing method and clustering technique, the next sensible step is to find the best number of clusters by comparing the resulting DB-indices. 
-\todo{fig}
-As can be seen, 2 clusters seems to work best. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e4_dbi.pdf}
+    \caption{The resulting DBI for different number of clusters can be seen. $k=2$ performs best.}
+    \label{fig:plots/e4_dbi.pdf}
+\end{figure}
+As can be seen in \autoref{fig:plots/e4_dbi.pdf}, 2 clusters seem to work best. 
 This is also true for different random initializations, the algorithm seems quite stable. 
 As the code has been designed to work with the lowest DB-index and start the search with two clusters, I will therefore do all following analysis with 2 clusters. 
 I will reflect if this is sensible in the end. \\
 
 In the last step we looked at the temporal evolution of the clusters. 
-\todo{fig}
-As can be seen, the 2 clusters can be easily understood. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{plots/e4_timeseries.pdf}
+    \caption{The temporal evolution of O$_3$ clusters can be seen. Trivially, having two clusters works well, as high-emission periods are separated from low-emission ones.}
+    \label{fig:plots/e4_timeseries.pdf}
+\end{figure}
+As can be seen in \autoref{fig:plots/e4_timeseries.pdf} exemplary, the 2 clusters can be easily understood. 
 One corresponds to the periods where high emission of pollutants was present, while the other corresponds to low emission periods. 
 This makes intuitive sense: If only two clusters are available periods where there are correlated high emissions (e.g. because of traffic) belong to one group, while the opposite belongs to the other. 
 I think this traffic behavior is exactly what can be seen in the cluster time evolution. 
 One could therefore give the clusters the labels "high emission" and "low emission". 
-From the analysis of just two clusters not a whole lot of insights can be gained. 
+From the analysis of just two clusters not a lot of insights can be gained. 
 One could inspect times of high pollution and try to find policies against that by correlating these times with processes that might be happening. 
 Further analysis, like the correlation with traffic data, is needed. 
 

@@ -1,3 +1,4 @@
+\subsection*{Lecture}
 In this weeks lecture we discussed validation for regression models or classifiers, performance indicators (both visually and numerically), linear regression and the basics behind neural networks (NNs), especially mulitlayer perceptrons (MLPs). 
 As all topics have been a large part in prior courses I took, I will focus on giving a rough overview and highlighting approaches that are new to me and especially interesting. \\
 
@@ -11,19 +12,19 @@ The training set is used for constructing the model, while the testing set is us
 This approach is simple and fast, but the model performance is usually underestimated as the data used was not used for training. 
 Another approach is k-fold cross-validation, where data is split into $k$ clusters. 
 Training is done on $k-1$ clusters, the remaining one is used for validation. 
-Then the the validation cluster is cycled through the whole dataset, such that in the end every cluster has been used for training and validation. 
+Then the validation cluster is cycled through the whole dataset, such that in the end every cluster has been used for training and validation. 
 The overall performance is then the mean of all cluster performances. 
 As a special case of k-fold cross validation one can also divide the data in as many clusters, as there are data points. 
 This is then called leave-one-out cross-validation. 
 It is numerically more expensive and usually provides an estimate that is too optimistic, but may be the best approach when the data sets are small. \\
 
 We then went on to talk about performance indicators to evaluate the models we construct. 
-A very simple approach is to use graphical methods that compare the model output with the observations themselve. 
+A very simple approach is to use graphical methods that compare the model output with the observations themselves. 
 This can be done using scatter plots or simple line graphs where the model and data are plotted on top of each other. 
 I additionally used an approach extensively for lab courses I did in the past which was not covered in the material. 
 When using regression, one can look at fit residuals, meaning the difference between the fit and data value. 
-If a fit describes the data well, these residuals should be centred around zero and have a spread described by a chi-squared distribution. 
-If one instead wants to evalute the performance of a model numerically, one could look at the mean error, mean squared error or root mean squared error. 
+If a fit describes the data well, these residuals should be centered around zero and have a spread described by a chi-squared distribution. 
+If one instead wants to evaluate the performance of a model numerically, one could look at the mean error, mean squared error or root mean squared error. 
 These are shown in \autoref{eq:me, mae, rmse} from left to right. 
 \begin{align}
     \mathrm{ME} &= \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i) & \mathrm{MAE} &= \frac{1}{n} \sum_{i=1}^n |y_i - \hat{y}_i| & \mathrm{RMSE} &= \sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2}
@@ -39,7 +40,7 @@ Other approaches we discussed where the coefficient of determination or $R^2$ va
 The index of agreement is widely used, as it is unitless and lies between 0 and 1. 
 It therefore allows for and easy comparison between different models. 
 An index of agreement of 1 indicates a perfect model and one below $0.4$ indicates worse performance than random guessing. 
-It is best practise to look at the IOA and RMSE together to find out if a model performs suitably well. \\
+It is best practice to look at the IOA and RMSE together to find out if a model performs suitably well. \\
 
 Next we discussed linear regression as a means of fitting curves with some free parameters to data. 
 The summary here is again more qualitative, as fitting algorithms are implemented in many different Python packages and can easily be used. 
@@ -65,11 +66,106 @@ The feed forward pass through the network updates each neuron in layer $j$ by pe
 \end{equation}
 Here $\varphi$ is a nonlinear activation function, the sum ranges over all neurons labelled $n$ in the previous layer, weights are denoted as $w$ and the bias as $b$. 
 After showing the network a sample (or a batch of samples), one trains the network to perform better. 
-Training works by so called gradient descent during backpropagation. 
-The idea is that a so called loss function, a function that shows the deviation of the networks output from its desired output, is differentiated with respect to the model parameters. 
-These are then updated towards the direction of steepest descent, meaning the model is adjusted such, that the output gets more closer to the desired output. 
+Training works by so-called gradient descent during backpropagation. 
+The idea is that a so-called loss function, a function that shows the deviation of the networks output from its desired output, is differentiated with respect to the model parameters. 
+These are then updated towards the direction of steepest descent, meaning the model is adjusted such, that the output gets closer to the desired output. 
 Further details are omitted here again. 
 For training neural networks, validation is extremely important, especially because they can become quite prone to overfitting. 
 To mitigate this, one should also experiment with the number of neurons of the network and their dimensionality and not set it too high. 
 From my experience the best way to advance when it comes to machine learning is just to experiment, try different architectures, cost functions, activations and number of free parameters and see what works best. 
+
+\subsection*{Exercises}
+This week there were two exercises. 
+The first dealt with creating a linear regression and ARX model and comparing them with each other as well as seeing how their performance change for different parameters. 
+The second exercise deals with deep learning. \\
+
+For the model comparisoin a finished notebook working with the \lstinline|AQData.csv| dataset was provided. 
+Only parameters should be adjusted and the models performances should be compared. 
+First, data is loaded and a standardized, sorted date time column is created. 
+The test and validation datasets are then split. 
+One year is always kept for validation, this is varied as a first test to see the influence of the choice of validation data. 
+Four different years are used and compared: 1996, 1997, 1998 and 1999. 
+Then a linear regression model with cosine and sine terms is constructed to model the NO$_2$ concentration. 
+The amount of harmonics is kept fixed for the first part, I used 24 yearly, 24 weekly and 12 daily terms. 
+This model is fit to the data and the changing validation set and its performance is evaluated. 
+The results are shown in \autoref{tab:lr_model}. 
+\begin{table}[ht]
+\centering
+\begin{tabular}{l|ccc| ccc}
+    \toprule
+    Year & IOA (Train) & $P_\mathrm{sys}$ (Train) & RMSE (Train) & IOA (Test) & $P_\mathrm{sys}$ (Test) & RMSE (Test) \\
+    \midrule
+    1999 & 0.74 & 0.60 & 18.54 & 0.71 & 0.56 & 18.76 \\
+    1998 & 0.73 & 0.61 & 18.48 & 0.74 & 0.58 & 17.98 \\
+    1997 & 0.76 & 0.57 & 18.06 & 0.68 & 0.53 & 19.72 \\
+    1996 & 0.75 & 0.60 & 16.97 & 0.66 & 0.74 & 22.63 \\
+    \midrule
+    Mean & 0.75 & 0.60 & 18.01 & 0.70 & 0.60 & 19.77 \\
+    \bottomrule
+\end{tabular}
+\caption{Index of agreement (IOA), proportion of systematic error ($P_\mathrm{sys}$) and RMSE for 1996--1999 and mean.}
+\label{tab:lr_model}
+\end{table}
+As expected, the model performance varies slightly between different test years due to random chance. 
+However, this fluctuation is quite small, indicating that overall the years are rather similar, and the model was able to generalize well. \\
+Next, the test year of 1999 is kept fixed, but the number of harmonics is varied. 
+I performed two test, one where I halved the number of terms (12 yearly and weekly terms, 6 daily ones) and one where I used 50\% more terms (36 yearly and weekly terms, 18 daily ones). 
+Again performance tests are done and compared (see \autoref{tab:lr_model_nterms}). 
+\begin{table}[ht]
+\centering
+\begin{tabular}{l|ccc|ccc}
+    \toprule
+    \# Terms & IOA & $P_\mathrm{sys}$ & RMSE & IOA & $P_\mathrm{sys}$ & RMSE \\
+    & (Train) & (Train) & (Train) & (Test) & (Test) & (Test) \\
+    \midrule
+    12, 12, 6   & 0.64 & 0.64 & 19.43 & 0.64 & 0.76 & 22.62 \\
+    24, 24, 12  & 0.74 & 0.60 & 18.54 & 0.71 & 0.56 & 18.76 \\
+    36, 36, 18  & 0.77 & 0.57 & 16.47 & 0.66 & 0.72 & 22.77 \\
+    \bottomrule
+\end{tabular}
+\caption{IOA, $P_\mathrm{sys}$ and RMSE for different numbers of terms.}
+\label{tab:lr_model_nterms}
+\end{table}
+The test performed above illustrated under- and overfitting clearly. 
+Using too few terms the index of agreement is small, and the systematic error proportion is large, especially for the test data. 
+This is due to the model having too few parameters to suitably generalize and perform well. 
+On the other hand, having too many parameters (bottom row) is also a problem as the IOA is again getting smaller with increasing systematic error. 
+This is due to the model overfitting, i.e. losing the ability to generalize to unseen data because it could fit "too well" to the data it was trained on. \\
+
+Next, an AR- and ARX model are built. 
+As before, predictions should be made on the NO$_2$ concentration. 
+The time lag was varied to see which one is best. 
+For this different prominent peaks that were identified in \autoref{sec:data visualization} are used as time lags, namely 8, 12, 24 and 168 hours. 
+Additionally, an ARX model including also the ozone concentration is trained and tested using the same time lags. 
+The results are shown in 
+\begin{table}[ht]
+\centering
+\begin{tabular}{l|cc|cc|cc|cc}
+    \toprule
+    & \multicolumn{2}{c|}{Train NO$_2$} & \multicolumn{2}{c|}{Test NO$_2$} & \multicolumn{2}{c|}{Train NO$_2$+O$_3$} & \multicolumn{2}{c}{Test NO$_2$+O$_3$} \\
+    Lag (hours) & IOA & $P_\mathrm{sys}$ & IOA & $P_\mathrm{sys}$ & IOA & $P_\mathrm{sys}$ & IOA & $P_\mathrm{sys}$ \\
+    \midrule
+    8   & 0.66 & 0.71 & 0.65 & 0.71 & 0.67 & 0.70 & 0.66 & 0.69 \\
+    12  & 0.66 & 0.71 & 0.65 & 0.71 & 0.67 & 0.70 & 0.66 & 0.68 \\
+    24  & 0.67 & 0.70 & 0.66 & 0.69 & 0.68 & 0.68 & 0.67 & 0.67 \\
+    168 & 0.74 & 0.62 & 0.72 & 0.61 & 0.74 & 0.61 & 0.73 & 0.59 \\
+    \bottomrule
+\end{tabular}
+\caption{Index of agreement (IOA) and proportion of systematic error ($P_\mathrm{sys}$) for AR(X) models with varying time lags.}
+\label{tab:arx_model_lag}
+\end{table}
+It can be seen that increasing the time lag leads to better models, as both the IOA is higher and the systematic error proportion lower. 
+Additionally, including the ozone data also makes the model slightly better still, although it has less of an influence than increasing the memory to capture all prominent peaks. 
+If simple models are preferred one should therefore use an AR model with sufficiently long memory to capture all strong variability. 
+If one wants to create an even better, although more complex model, using an ARX model can be a good option. 
+It should also be noted that fitting sine and cosine regressors leads to similar performance (when one keeps overfitting in mind and tries to mitigate it). 
+This can therefore also be an option. 
+Still, the full ARX model performs best both in terms of IOA and systematics and would therefore be my pick as the model to use. 
+Not that the full tabularized test results showing also different metrics are available in \cite{github:stewey0-repo-2025} under \lstinline|Code\topic_5\LR_ARX_results.md|. \\
+
+The second exercise this week dealt with a deep learning task using the same dataset. 
+
+
+\subsection*{Reflection}
+
 
