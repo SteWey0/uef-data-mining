@@ -55,7 +55,7 @@ But more complicated functions like the sum of different harmonics with prominen
 When doing this complicated fit with necessarily many free parameters, one should be careful to always use model validation to see if there is overfitting. 
 Lastly there are also autoregressive models which employ a sort of "memory" to handle time series data better. 
 An expansion of this are so called ARX models, which can handle the time series structure of different data columns simultaneously. 
-I have never actually worked with such models, but they seems incredibly useful for the time series data that is usually present in environmental science. \\
+I have never actually worked with such models, but they seem incredibly useful for the time series data that is usually present in environmental science. \\
 
 During the last part of the lecture we had a quick introduction to neural networks with the example of a multilayer perceptron. 
 This is a densely connected neural network that has one input layer and an output layer. 
@@ -79,7 +79,7 @@ This week there were two exercises.
 The first dealt with creating a linear regression and ARX model and comparing them with each other as well as seeing how their performance change for different parameters. 
 The second exercise deals with deep learning. \\
 
-For the model comparisoin a finished notebook working with the \lstinline|AQData.csv| dataset was provided. 
+For the model comparison a finished notebook working with the \lstinline|AQData.csv| dataset was provided. 
 Only parameters should be adjusted and the models performances should be compared. 
 First, data is loaded and a standardized, sorted date time column is created. 
 The test and validation datasets are then split. 
@@ -164,7 +164,85 @@ Still, the full ARX model performs best both in terms of IOA and systematics and
 Not that the full tabularized test results showing also different metrics are available in \cite{github:stewey0-repo-2025} under \lstinline|Code\topic_5\LR_ARX_results.md|. \\
 
 The second exercise this week dealt with a deep learning task using the same dataset. 
+First, a date time column is again created and outliers are removed. 
+Then three different architectures are used. 
+First, a basic multilayer perceptron is used to predict the future NO$_2$ concentration based on a 24-hour lag of NO$_2$ data. 
+In a second step further information is supplied to the net, namely periodic features in addition to the lagged variable. 
+Lastly also other available meteorological data is added. 
+In each step, I experiment with the network structure by adding and removing neurons or layers to find the optimal architecture by comparing their metrics on a test dataset. 
+In a last step, all networks are summarized and compared. \\
+The first network (NN1) only used 4 hidden neurons in a single hidden layer and the ReLu activation function and was trained only on lagged data. 
+It achieved an IOA of 0.65 in both training and testing with a fraction of systematics PSE of 0.74 for training and 0.75 for testing. 
+It was surprising to me, that such a small network with such limited data can already produce these relatively high scores. \\
+For the next neural network periodic features are supplied additionally (NN2). 
+The resulting test metrics for 1 layer with 4 neurons, 2 layers with 64 neurons each, 3 layers with 128, 64, 32 neurons and a changed activation function from ReLu to tanh are shown in \autoref{tab:mlp_comparison}. 
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccc}
+    \hline
+	\textbf{Configuration} & \textbf{Train IA} & \textbf{Train PSE} & \textbf{Test IA} & \textbf{Test PSE} \\
+    \hline
+    \multicolumn{5}{l}{\textit{NN 1: NO$_2$ Lag Only}} \\
+    (4) ReLu & 0.65 & 0.73 & 0.65 & 0.74 \\
+\hline
+\multicolumn{5}{l}{\textit{NN 2: NO$_2$ Lag + Periodic Features}} \\
+(4) ReLU & 0.68 & 0.70 & 0.70 & 0.66 \\
+(64, 64) ReLU & 0.80 & 0.53 & 0.76 & 0.50 \\
+(128, 64, 32) ReLU & 0.80 & 0.50 & 0.76 & 0.46 \\
+(128, 64, 32) tanh & 0.84 & 0.47 & 0.75 & 0.45 \\
+\hline
+\multicolumn{5}{l}{\textit{NN 3: NO$_2$ Lag + Periodic + Meteorological}} \\
+(8, 4) ReLu & 0.77 & 0.57 & 0.77 & 0.51 \\
+(64, 64) ReLu & 0.89 & 0.37 & 0.80 & 0.30 \\
+(128, 64, 32) ReLu & 0.93 & 0.21 & 0.76 & 0.23 \\
+\hline
+\end{tabular}
+\caption{MLP Model Comparison: Index of Agreement (IA) and Proportion of Systematic Error (PSE)}
+\label{tab:mlp_comparison}
+\end{table}
+As can be seen the best configuration is reached for the architecture $(128,64,32)$ using the ReLu activation function. 
+This is because the test IOA is highest and the test PSE is lowest. 
+Additionally, the training time using the ReLu function is significantly shorter (30 instead of 50 seconds) with similar results, therefore it should be preferred. \\
+The last neural network (NN3) also had access to meteorological data. 
+As can be seen in the comparison table, this significantly increases the IOA again. 
+The best architecture is reached for a network with two layers consisting of 64 neurons each. 
+It can be seen that through supplying more data to the network less layers are required to reach a network that generalizes well. 
+Even the very small network of size $(8,4)$ already beats the largest network of architecture NN2. 
+A comparison of the observed vs. predicted graphs resulting from the best 3 networks of the different supplied training data are shown for comparison in \autoref{fig:e5_nn}. 
+\begin{figure}[htbp]
+    \centering
+    \begin{tabular}{c@{\hskip 1pt}c c c}
+    \subfloat{\includegraphics[width=0.3\textwidth]{plots/e5_nn1.pdf} }
+    &
+    \subfloat{\includegraphics[width=0.3\textwidth]{plots/e5_nn2.pdf} }
+    &
+    \subfloat{\includegraphics[width=0.3\textwidth]{plots/e5_nn3.pdf} }
+    \end{tabular}
+    \caption{The observed vs predicted graphs of the three neural network architectures is shown. As the units are arbitrary, they are left out. A qualitative comparison to the ideal case of the 1:1 line shows that NN3 performs the best.}
+    \label{fig:e5_nn}
+\end{figure}
+Lastly, a comparison between all models built during this exercise will be made. 
+For this the best model parameters from each technique will be used. 
+The results are shown in \autoref{tab:final comp}. 
 
+\begin{table}[h]
+\centering
+\begin{tabular}{l|cc}
+    \hline
+	\textbf{Model} & \textbf{Test IOA} & \textbf{Test PSE} \\
+    \hline
+    Linear regression & 0.71 & 0.56 \\
+    AR & 0.72 &0.61 \\
+    ARX & 0.73 & 0.59 \\
+    NN1 & 0.65 & 0.74 \\
+    NN2 & 0.76 & 0.46 \\
+    NN3 & 0.80 & 0.30
+\end{tabular}
+\caption{Here the final comparison between all models based on test metrics is shown.}
+\label{tab:final comp}
+\end{table}
+It can be clearly seen that the best model both in terms of IOA, and systematics is the neural network using meteorological, NO$_2$ lag and periodic information. 
+I would therefore recommend this model for forecasting purposes. 
 
 \subsection*{Reflection}
 
