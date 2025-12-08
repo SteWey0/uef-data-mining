@@ -15,7 +15,7 @@ Sammon mapping follows these steps:
     \item First, pairwise distances between all inputs $d_{ij}=\|\mathbf{x}_i-\mathbf{x}_j\|$ and all outputs $d'_{ij}=\|\mathbf{y}_i-\mathbf{y}_j\|$ are calculated. For the first iteration outputs can be initialized randomly. 
     \item A cost function is calculated as $E=\frac{1}{\sum_{i<j}d_{ij}}\sum_{i<j}\frac{(d_{ij}-d'_{ij})^2}{d_{ij}}$. Note how the denominator leads to a larger weight for small distances. The prefactor is just for normalization.
     \item This cost function is minimized through usual gradient descent and the output mappings are updated as $y_i\leftarrow y_i-\eta\frac{\partial E}{\partial y_i}$, where $\eta$ is a preset learning rate. 
-\end{enumerate} \todo{check equatoins. they differ from lecture}
+\end{enumerate}
 The downsides of Sammon mapping include its sensitivity to local minima leading to failed mappings (due to random initialization), and that the algorithm is rather slow ($\mathcal{O}(N^2)$ distance calculations). 
 However, it is useful if distances should be preserved well. \\
 
@@ -32,7 +32,6 @@ The following steps are important:
     $\mathbf{w}_i(t+1)=\mathbf{w}_i(t)+\alpha(t)\,h_{ci}(t)\,(\mathbf{x}-\mathbf{w}_i(t))$ with the neighborhood function (Gaussian)
     $h_{ci}(t)=\exp\!\left(-\frac{\|\mathbf{r}_c-\mathbf{r}_i\|^2}{2\sigma(t)^2}\right)$. Here $\alpha(t)$ is the learning rate and $\sigma(t)$ the kernel size, specifying the weighting of distances. 
 \end{enumerate}
-\todo{add boldface vectors here and before}
 After these steps have been repeated for many input samples and the network is trained, similar inputs appear as clusters in the low dimensional representation, while boundaries or gaps in the representation show dissimilar inputs. 
 This can be especially well seen when plotting a heatmap of the so-called U-matrix for neuron $i$, defined as 
 \begin{equation}
@@ -168,4 +167,4 @@ I did a little each day, which definitely helped my understanding and in answeri
 However, I underestimated the amount of time needed for the exercises by a lot this week. 
 As they were a fair bit longer this week, it got quite tight to the end and I needed to work quite a lot two days. 
 Next week I should try to plan more time for the exercise. 
-However, I am quite happy with my progress in general, as I up to now succeeded in working through the lectures, exercises and writing the diary each week without procrastinating. 
+However, I am quite happy with my progress in general, as I up to now succeeded in working through the lectures, exercises and writing the diary each week. 

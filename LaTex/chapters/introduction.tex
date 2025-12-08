@@ -67,9 +67,8 @@ The first step is explorative data analysis (EDA), where plotting the data (e.g.
 This step makes a lot of sense to me, especially once one deals with larger and larger datasets. 
 However, this has been quite underutilized during my physics studies so far, as we have usually worked the other way around by first forming a hypothesis (for example a model) and then applying it to the data and doing statistics to see if it fits. 
 It is quite interesting to me to do a different approach in this lecture and to see, where this may lead me. 
-I am looking forward to applying this to real datasets in the following weeks during the tutorials. 
-\todo{at end: see if this really was interesting!} 
-The next step is descriptive modelling, where one tries to find patters in the data by, fundamentally, playing around with it. \todo{ok?}
+I am looking forward to applying this to real datasets in the following weeks during the tutorials.  
+The next step is descriptive modelling, where one tries to find patters in the data. 
 One can for example try to fit functions like multivariate Gaussians or use clustering methods on the data. 
 Additionally, one can also try to use predictive modelling like classification neural networks to group the data and gather new insights. 
 Hopefully these steps then lead to discovering patterns and rules in the data and finding a strong, i.e. simple model with high degree of generalization and prediction-power instead of remaining with weak models, which do offer some insights but fail to generalize and really understand the data. 
@@ -77,24 +76,21 @@ Weak models are also often classified by many parameters leading to the aforemen
 During my prior classes where I often used model fitting and machine learning I have often had contacts with overfitting due to fit functions with too many free parameters or overly large neural networks. 
 I therefore know, that avoiding overfitting is one of the most difficult parts in data analysis and am definitely looking forward to learning more about this. 
 
-
-
 \subsection*{Exercise}
 The goal of the first exercise was to get a handle on the provided \lstinline|toolo.csv| dataset by using the aforementioned technique of EDA. 
 First data from leap years is dropped for better comparability. 
 After this the \lstinline|.describe| method of \lstinline|pandas|-dataframes is used to get a summary of the nitrogen dioxide and ozone concentration columns. 
 By this we find mean concentrations and standard deviations of:
 \begin{align*}
-    \mathrm{NO_2} &: 38.4 \pm 23.2 \\
-    \mathrm{O_3} &: 37.0 \pm 22.0 
+    \mathrm{NO_2} &: 38.4 \pm 23.2\,\mathrm{\frac{\mu g}{m^3}} \\
+    \mathrm{O_3} &: 37.0 \pm 22.0\,\mathrm{\frac{\mu g}{m^3}} 
 \end{align*}
-\todo{units?}
 This makes clear, that the nitrogen dioxide measurement has a larger variability than the ozone measurement. 
 Furthermore, this simple analysis indicates already some erroneous data points. 
-The minimum of the NO$_2$ concentration is for example at $-3$ \todo{units}. 
+The minimum of the NO$_2$ concentration is for example at $-3\,\mathrm{\frac{\mu g}{m^3}}$. 
 This is unphysical and could stem from an erroneous measurement e.g. an error when digitizing the measured concentration. 
 Sometimes measurement devices also deliberately save unphysical values to indicate an error that happened during the measurement. 
-In this case the value of $-3$ \todo{unit} could be understood as an error code. 
+In this case the value of $-3\,\mathrm{\frac{\mu g}{m^3}}$ could be understood as an error code. 
 To see whether this is the case, one would need to take a look at the manufacturers data sheet of the specific detector in question. 
 In principle such data points should be excluded from further analysis to not skew the results one gets from the physical data. \\
 In a next step the columns corresponding to the particulate matter mass under 10\,$\mu$m, carbon monoxide concentration, temperature, humidity and wind speed have been analyzed additionally in a similar manner. 
